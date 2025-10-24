@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "com.example.chessassiststreamer.app-debug-42:/layout_activity_main.xml.flat",
+        "source": "com.example.chessassiststreamer.app-main-44:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.chessassiststreamer.app-debug-42:/xml_backup_rules.xml.flat",
+        "source": "com.example.chessassiststreamer.app-main-44:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.example.chessassiststreamer.app-debug-42:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.chessassiststreamer.app-main-44:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.example.chessassiststreamer.app-debug-42:/drawable_status_indicator_on.xml.flat",
+        "source": "com.example.chessassiststreamer.app-main-44:/drawable/status_indicator_on.xml"
+    },
+    {
+        "merged": "com.example.chessassiststreamer.app-debug-42:/drawable_ic_launcher.xml.flat",
+        "source": "com.example.chessassiststreamer.app-main-44:/drawable/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.chessassiststreamer.app-debug-42:/drawable_status_indicator_off.xml.flat",
+        "source": "com.example.chessassiststreamer.app-main-44:/drawable/status_indicator_off.xml"
+    }
+]

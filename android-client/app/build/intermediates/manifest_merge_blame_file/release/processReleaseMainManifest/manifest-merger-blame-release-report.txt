@@ -1,0 +1,167 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.chessassiststreamer"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:4:5-67
+11-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.CAMERA" />
+12-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:5:5-65
+12-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:5:22-62
+13    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+13-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:6:5-76
+13-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:6:22-73
+14    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+14-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:7:5-79
+14-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:7:22-76
+15
+16    <uses-feature
+16-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:9:5-85
+17        android:name="android.hardware.camera"
+17-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:9:19-57
+18        android:required="false" />
+18-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:9:58-82
+19
+20    <permission
+20-->[androidx.core:core:1.13.1] /home/codespace/.gradle/caches/8.9/transforms/954cc05aea638b50619e8b6da14d1328/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+21        android:name="com.example.chessassiststreamer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+21-->[androidx.core:core:1.13.1] /home/codespace/.gradle/caches/8.9/transforms/954cc05aea638b50619e8b6da14d1328/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+22        android:protectionLevel="signature" />
+22-->[androidx.core:core:1.13.1] /home/codespace/.gradle/caches/8.9/transforms/954cc05aea638b50619e8b6da14d1328/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+23
+24    <uses-permission android:name="com.example.chessassiststreamer.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+24-->[androidx.core:core:1.13.1] /home/codespace/.gradle/caches/8.9/transforms/954cc05aea638b50619e8b6da14d1328/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+24-->[androidx.core:core:1.13.1] /home/codespace/.gradle/caches/8.9/transforms/954cc05aea638b50619e8b6da14d1328/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+25
+26    <application
+26-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:11:5-28:19
+27        android:allowBackup="true"
+27-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:12:9-35
+28        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+28-->[androidx.core:core:1.13.1] /home/codespace/.gradle/caches/8.9/transforms/954cc05aea638b50619e8b6da14d1328/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+29        android:dataExtractionRules="@xml/data_extraction_rules"
+29-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:13:9-65
+30        android:extractNativeLibs="false"
+31        android:fullBackupContent="@xml/backup_rules"
+31-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:14:9-54
+32        android:icon="@drawable/ic_launcher"
+32-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:15:9-45
+33        android:label="@string/app_name"
+33-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:16:9-41
+34        android:supportsRtl="true"
+34-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:17:9-35
+35        android:theme="@style/Theme.ChessAssistStreamer" >
+35-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:18:9-57
+36        <activity
+36-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:19:9-27:20
+37            android:name="com.example.chessassiststreamer.MainActivity"
+37-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:20:13-41
+38            android:exported="true"
+38-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:21:13-36
+39            android:theme="@style/Theme.ChessAssistStreamer" >
+39-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:22:13-61
+40            <intent-filter>
+40-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:23:13-26:29
+41                <action android:name="android.intent.action.MAIN" />
+41-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:24:17-69
+41-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:24:25-66
+42
+43                <category android:name="android.intent.category.LAUNCHER" />
+43-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:25:17-77
+43-->/workspaces/Movies/android-client/app/src/main/AndroidManifest.xml:25:27-74
+44            </intent-filter>
+45        </activity>
+46        <!--
+47        Service for holding metadata. Cannot be instantiated.
+48        Metadata will be merged from other manifests.
+49        -->
+50        <service
+50-->[androidx.camera:camera-core:1.3.4] /home/codespace/.gradle/caches/8.9/transforms/046a0637d6660461cbe0a3de1fd6f555/transformed/camera-core-1.3.4/AndroidManifest.xml:29:9-33:78
+51            android:name="androidx.camera.core.impl.MetadataHolderService"
+51-->[androidx.camera:camera-core:1.3.4] /home/codespace/.gradle/caches/8.9/transforms/046a0637d6660461cbe0a3de1fd6f555/transformed/camera-core-1.3.4/AndroidManifest.xml:30:13-75
+52            android:enabled="false"
+52-->[androidx.camera:camera-core:1.3.4] /home/codespace/.gradle/caches/8.9/transforms/046a0637d6660461cbe0a3de1fd6f555/transformed/camera-core-1.3.4/AndroidManifest.xml:31:13-36
+53            android:exported="false" >
+53-->[androidx.camera:camera-core:1.3.4] /home/codespace/.gradle/caches/8.9/transforms/046a0637d6660461cbe0a3de1fd6f555/transformed/camera-core-1.3.4/AndroidManifest.xml:32:13-37
+54            <meta-data
+54-->[androidx.camera:camera-camera2:1.3.4] /home/codespace/.gradle/caches/8.9/transforms/438cccaf39cfed7b213cd4369a92f720/transformed/camera-camera2-1.3.4/AndroidManifest.xml:30:13-32:89
+55                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+55-->[androidx.camera:camera-camera2:1.3.4] /home/codespace/.gradle/caches/8.9/transforms/438cccaf39cfed7b213cd4369a92f720/transformed/camera-camera2-1.3.4/AndroidManifest.xml:31:17-103
+56                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+56-->[androidx.camera:camera-camera2:1.3.4] /home/codespace/.gradle/caches/8.9/transforms/438cccaf39cfed7b213cd4369a92f720/transformed/camera-camera2-1.3.4/AndroidManifest.xml:32:17-86
+57        </service>
+58
+59        <provider
+59-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+60            android:name="androidx.startup.InitializationProvider"
+60-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+61            android:authorities="com.example.chessassiststreamer.androidx-startup"
+61-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+62            android:exported="false" >
+62-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
+63            <meta-data
+63-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+64                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+64-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
+65                android:value="androidx.startup" />
+65-->[androidx.emoji2:emoji2:1.2.0] /home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+66            <meta-data
+66-->[androidx.lifecycle:lifecycle-process:2.8.3] /home/codespace/.gradle/caches/8.9/transforms/7f035fe0f6eb36ab69cd792b31eba342/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:29:13-31:52
+67                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+67-->[androidx.lifecycle:lifecycle-process:2.8.3] /home/codespace/.gradle/caches/8.9/transforms/7f035fe0f6eb36ab69cd792b31eba342/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:30:17-78
+68                android:value="androidx.startup" />
+68-->[androidx.lifecycle:lifecycle-process:2.8.3] /home/codespace/.gradle/caches/8.9/transforms/7f035fe0f6eb36ab69cd792b31eba342/transformed/lifecycle-process-2.8.3/AndroidManifest.xml:31:17-49
+69            <meta-data
+69-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+70                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+70-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+71                android:value="androidx.startup" />
+71-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+72        </provider>
+73
+74        <receiver
+74-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+75            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+75-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+76            android:directBootAware="false"
+76-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+77            android:enabled="true"
+77-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+78            android:exported="true"
+78-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+79            android:permission="android.permission.DUMP" >
+79-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+80            <intent-filter>
+80-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+81                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+81-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+81-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+82            </intent-filter>
+83            <intent-filter>
+83-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+84                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+84-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+84-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+85            </intent-filter>
+86            <intent-filter>
+86-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+87                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+87-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+87-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+88            </intent-filter>
+89            <intent-filter>
+89-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+90                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+91            </intent-filter>
+92        </receiver>
+93    </application>
+94
+95</manifest>

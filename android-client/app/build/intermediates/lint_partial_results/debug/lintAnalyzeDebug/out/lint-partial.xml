@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.5.0" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.example.chessassiststreamer.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.color.purple_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="2"
+            column="12"
+            startOffset="24"
+            endLine="2"
+            endColumn="29"
+            endOffset="41"/>
+        <entry
+            name="model"
+            string="array[resolution_labels(U)],color[warning_red(U),success_green(U),purple_200(D),purple_500(U),purple_700(U),teal_200(U),teal_700(U),black(U),white(U)],drawable[ic_launcher(U),status_indicator_off(U),status_indicator_on(U)],id[ipInputLayout(U),portInputLayout(U),ipAddressEditText(U),portEditText(U),cameraToggleGroup(U),rearCameraButton(U),frontCameraButton(U),resolutionInputLayout(U),resolutionSpinner(U),previewTextureView(U),startStopButton(U),statusContainer(U),statusIndicator(U),statusTextView(U)],layout[activity_main(U)],string[app_name(U),ip_hint(U),port_hint(U),rear_camera(U),front_camera(U),resolution(U),start(U),stop(U)],style[Theme_ChessAssistStreamer(U),Widget_MaterialComponents_Button_TextButton(R),Widget_MaterialComponents_TextInputLayout_OutlinedBox_ExposedDropdownMenu(R),TextAppearance_MaterialComponents_Body1(R),Theme_MaterialComponents_DayNight_DarkActionBar(R)],xml[data_extraction_rules(U),backup_rules(U)];b^1,c^2,1b^1d^e^1e^d^12^1f^25^20^21^11^26^17^14^22^18^b^27,24^28^4^5^9^6^7^8;;;"/>
+    </map>
+
+</incidents>
