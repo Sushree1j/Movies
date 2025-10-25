@@ -1,4 +1,4 @@
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:536: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:560: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
                 return String.format(
                        ^
 
@@ -62,7 +62,7 @@
    available, and that is what this lint check helps find.
 
 /workspaces/Movies/android-client/app/src/main/res/values/themes.xml:9: Warning: Unnecessary; SDK_INT is always >= 21 [ObsoleteSdkInt]
-        <item name="android:statusBarColor" tools:targetApi="l">@color/purple_700</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/primary_dark</item>
                                             ~~~~~~~~~~~~~~~~~~~
 
    Explanation for issues of type "ObsoleteSdkInt":
@@ -74,9 +74,76 @@
    where the version qualifier is less than or equal to the minSdkVersion,
    where the contents should be merged into the best folder.
 
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:88: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+            <LinearLayout
+             ~~~~~~~~~~~~
+
+   Explanation for issues of type "DisableBaselineAlignment":
+   When a LinearLayout is used to distribute the space proportionally between
+   nested layouts, the baseline alignment property should be turned off to
+   make the layout computation faster.
+
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:7: Warning: Possible overdraw: Root element paints background @color/background_color with a theme that also paints a background (inferred theme is @style/Theme_ChessAssistStreamer) [Overdraw]
+    android:background="@color/background_color">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "Overdraw":
+   If you set a background drawable on a root view, then you should use a
+   custom theme where the theme background is null. Otherwise, the theme
+   background will be painted first, only to have your custom background
+   completely cover it; this is called "overdraw".
+
+   NOTE: This detector relies on figuring out which layouts are associated
+   with which activities based on scanning the Java code, and it's currently
+   doing that using an inexact pattern matching algorithm. Therefore, it can
+   incorrectly conclude which activity the layout is associated with and then
+   wrongly complain that a background-theme is hidden.
+
+   If you want your custom background on multiple pages, then you should
+   consider making a custom theme with your custom background and just using
+   that theme instead of a root element background.
+
+   Of course it's possible that your custom drawable is translucent and you
+   want it to be mixed with the background. However, you will get better
+   performance if you pre-mix the background with your drawable and use that
+   resulting image or color as a custom theme background instead.
+
 /workspaces/Movies/android-client/app/src/main/res/values/colors.xml:2: Warning: The resource R.color.purple_200 appears to be unused [UnusedResources]
     <color name="purple_200">#BB86FC</color>
            ~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:3: Warning: The resource R.color.purple_500 appears to be unused [UnusedResources]
+    <color name="purple_500">#6200EE</color>
+           ~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:4: Warning: The resource R.color.purple_700 appears to be unused [UnusedResources]
+    <color name="purple_700">#3700B3</color>
+           ~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:5: Warning: The resource R.color.teal_200 appears to be unused [UnusedResources]
+    <color name="teal_200">#03DAC5</color>
+           ~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:6: Warning: The resource R.color.teal_700 appears to be unused [UnusedResources]
+    <color name="teal_700">#018786</color>
+           ~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:9: Warning: The resource R.color.success_green appears to be unused [UnusedResources]
+    <color name="success_green">#4CAF50</color>
+           ~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:10: Warning: The resource R.color.warning_red appears to be unused [UnusedResources]
+    <color name="warning_red">#FF5722</color>
+           ~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:15: Warning: The resource R.color.primary_light appears to be unused [UnusedResources]
+    <color name="primary_light">#7E57C2</color>
+           ~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:20: Warning: The resource R.color.text_secondary appears to be unused [UnusedResources]
+    <color name="text_secondary">#757575</color>
+           ~~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/colors.xml:21: Warning: The resource R.color.divider_color appears to be unused [UnusedResources]
+    <color name="divider_color">#EEEEEE</color>
+           ~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/strings.xml:7: Warning: The resource R.string.front_camera appears to be unused [UnusedResources]
+    <string name="front_camera">Front Camera</string>
+            ~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/values/strings.xml:8: Warning: The resource R.string.rear_camera appears to be unused [UnusedResources]
+    <string name="rear_camera">Rear Camera</string>
+            ~~~~~~~~~~~~~~~~~~
 
    Explanation for issues of type "UnusedResources":
    Unused resources make applications larger and slow down builds.
@@ -92,37 +159,37 @@
    lint.unused-resources.exclude-tests =true.
    ,
 
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:186: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:194: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
         portEditText.setText("5000")
                              ~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:186: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:194: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
         portEditText.setText("5000")
                               ~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:237: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:246: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                     statusText.text = "Connecting..."
                                       ~~~~~~~~~~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:237: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:246: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                     statusText.text = "Connecting..."
                                        ~~~~~~~~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:247: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:257: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                     statusText.text = "Connected"
                                       ~~~~~~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:247: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:257: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                     statusText.text = "Connected"
                                        ~~~~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:373: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:390: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
                 statusText.text = "Streaming ${fpsFormat.format(fps)} FPS"
                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:373: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:390: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                 statusText.text = "Streaming ${fpsFormat.format(fps)} FPS"
                                    ~~~~~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:373: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:390: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
                 statusText.text = "Streaming ${fpsFormat.format(fps)} FPS"
                                                                      ~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:414: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:438: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
             statusText.text = "Idle"
                               ~~~~~~
-/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:414: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+/workspaces/Movies/android-client/app/src/main/java/com/example/chessassiststreamer/MainActivity.kt:438: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             statusText.text = "Idle"
                                ~~~~
 
@@ -139,9 +206,30 @@
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:136: Warning: Hardcoded string "Idle", should use @string resource [HardcodedText]
-            android:text="Idle"
-            ~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:37: Warning: Hardcoded string "📹", should use @string resource [HardcodedText]
+                android:text="📹"
+                ~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:52: Warning: Hardcoded string "Stream your camera feed", should use @string resource [HardcodedText]
+                android:text="Stream your camera feed"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:82: Warning: Hardcoded string "Connection Settings", should use @string resource [HardcodedText]
+                android:text="Connection Settings"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:160: Warning: Hardcoded string "Camera Settings", should use @string resource [HardcodedText]
+                android:text="Camera Settings"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:180: Warning: Hardcoded string "📷 Rear", should use @string resource [HardcodedText]
+                    android:text="📷 Rear"
+                    ~~~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:190: Warning: Hardcoded string "🤳 Front", should use @string resource [HardcodedText]
+                    android:text="🤳 Front"
+                    ~~~~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:245: Warning: Hardcoded string "Camera Preview", should use @string resource [HardcodedText]
+                android:text="Camera Preview"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspaces/Movies/android-client/app/src/main/res/layout/activity_main.xml:304: Warning: Hardcoded string "Ready to stream", should use @string resource [HardcodedText]
+                android:text="Ready to stream"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
    Explanation for issues of type "HardcodedText":
    Hardcoding text attributes directly in layout files is bad for several
@@ -157,4 +245,4 @@
    There are quickfixes to automatically extract this hardcoded string into a
    resource lookup.
 
-0 errors, 27 warnings
+0 errors, 47 warnings

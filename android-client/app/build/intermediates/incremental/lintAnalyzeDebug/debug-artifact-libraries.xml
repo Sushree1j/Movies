@@ -27,9 +27,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.viewpager2:viewpager2:1.0.0@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/debdbe9251cae844bfe3a5a9567f89f4/transformed/viewpager2-1.0.0/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/354b5172ac9f41c2e4be7c7080276f25/transformed/jetified-viewpager2-1.0.0/jars/classes.jar"
       resolved="androidx.viewpager2:viewpager2:1.0.0"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/debdbe9251cae844bfe3a5a9567f89f4/transformed/viewpager2-1.0.0"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/354b5172ac9f41c2e4be7c7080276f25/transformed/jetified-viewpager2-1.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -53,9 +53,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.activity:activity:1.9.0@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/a1c1b6e8ee701343e1d96bbb3c247cd0/transformed/activity-1.9.0/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/55ee4924873af92d166f2dd284b09df2/transformed/jetified-activity-1.9.0/jars/classes.jar"
       resolved="androidx.activity:activity:1.9.0"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/a1c1b6e8ee701343e1d96bbb3c247cd0/transformed/activity-1.9.0"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/55ee4924873af92d166f2dd284b09df2/transformed/jetified-activity-1.9.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -66,9 +66,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.activity:activity-ktx:1.9.0@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/7eed42e4c7ed9066c88e891861a479df/transformed/activity-ktx-1.9.0/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/19c41a0f2cfa281f92bf6562bbb55dec/transformed/jetified-activity-ktx-1.9.0/jars/classes.jar"
       resolved="androidx.activity:activity-ktx:1.9.0"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/7eed42e4c7ed9066c88e891861a479df/transformed/activity-ktx-1.9.0"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/19c41a0f2cfa281f92bf6562bbb55dec/transformed/jetified-activity-ktx-1.9.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -79,9 +79,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.appcompat:appcompat-resources:1.6.1@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/20c227f14119f82c7803f3a5b27b24f6/transformed/appcompat-resources-1.6.1/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/056573314eaf2bc4e10fc7d0502d5983/transformed/jetified-appcompat-resources-1.6.1/jars/classes.jar"
       resolved="androidx.appcompat:appcompat-resources:1.6.1"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/20c227f14119f82c7803f3a5b27b24f6/transformed/appcompat-resources-1.6.1"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/056573314eaf2bc4e10fc7d0502d5983/transformed/jetified-appcompat-resources-1.6.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -183,9 +183,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.camera:camera-video:1.3.4@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/d01d76918fa9a805c7f164e1ce59a5e9/transformed/camera-video-1.3.4/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/045e26644886c0557010d16b098d7214/transformed/jetified-camera-video-1.3.4/jars/classes.jar"
       resolved="androidx.camera:camera-video:1.3.4"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/d01d76918fa9a805c7f164e1ce59a5e9/transformed/camera-video-1.3.4"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/045e26644886c0557010d16b098d7214/transformed/jetified-camera-video-1.3.4"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -196,9 +196,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.camera:camera-view:1.3.4@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/8ec6475141230b4929b44dddc127e787/transformed/camera-view-1.3.4/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/fd2cfbb5600f979dbaa0dedcfb7f2b7b/transformed/jetified-camera-view-1.3.4/jars/classes.jar"
       resolved="androidx.camera:camera-view:1.3.4"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/8ec6475141230b4929b44dddc127e787/transformed/camera-view-1.3.4"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/fd2cfbb5600f979dbaa0dedcfb7f2b7b/transformed/jetified-camera-view-1.3.4"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -209,9 +209,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.camera:camera-lifecycle:1.3.4@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/d1d3ced4bd9c77f9c4dd118d849e0e39/transformed/camera-lifecycle-1.3.4/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/bebec09914f5f04bddb7f4991cc76529/transformed/jetified-camera-lifecycle-1.3.4/jars/classes.jar"
       resolved="androidx.camera:camera-lifecycle:1.3.4"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/d1d3ced4bd9c77f9c4dd118d849e0e39/transformed/camera-lifecycle-1.3.4"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/bebec09914f5f04bddb7f4991cc76529/transformed/jetified-camera-lifecycle-1.3.4"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -222,9 +222,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.camera:camera-camera2:1.3.4@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/438cccaf39cfed7b213cd4369a92f720/transformed/camera-camera2-1.3.4/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/09209572bad205c997a608b3dcab9e02/transformed/jetified-camera-camera2-1.3.4/jars/classes.jar"
       resolved="androidx.camera:camera-camera2:1.3.4"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/438cccaf39cfed7b213cd4369a92f720/transformed/camera-camera2-1.3.4"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/09209572bad205c997a608b3dcab9e02/transformed/jetified-camera-camera2-1.3.4"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -235,9 +235,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.camera:camera-core:1.3.4@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/046a0637d6660461cbe0a3de1fd6f555/transformed/camera-core-1.3.4/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/ba04bd725bb7a29bca1e0506a0cf7a5c/transformed/jetified-camera-core-1.3.4/jars/classes.jar"
       resolved="androidx.camera:camera-core:1.3.4"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/046a0637d6660461cbe0a3de1fd6f555/transformed/camera-core-1.3.4"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/ba04bd725bb7a29bca1e0506a0cf7a5c/transformed/jetified-camera-core-1.3.4"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -326,9 +326,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-viewmodel-android:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/988ba1558870b9a4494b491fcf678337/transformed/lifecycle-viewmodel-release/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/45ab250ce0514828b76a8afdea15121c/transformed/jetified-lifecycle-viewmodel-release/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-viewmodel-android:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/988ba1558870b9a4494b491fcf678337/transformed/lifecycle-viewmodel-release"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/45ab250ce0514828b76a8afdea15121c/transformed/jetified-lifecycle-viewmodel-release"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -343,9 +343,9 @@
       resolved="androidx.lifecycle:lifecycle-common-jvm:2.8.3"/>
   <library
       name="androidx.lifecycle:lifecycle-runtime-android:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/46499ef8798c49d89573326c1eef9f85/transformed/lifecycle-runtime-release/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/0917feb6c12ee96fa3abc9b0216bd95c/transformed/jetified-lifecycle-runtime-release/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-runtime-android:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/46499ef8798c49d89573326c1eef9f85/transformed/lifecycle-runtime-release"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/0917feb6c12ee96fa3abc9b0216bd95c/transformed/jetified-lifecycle-runtime-release"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -369,9 +369,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/b0c97d6008012ba1fd46f55ba007c204/transformed/lifecycle-viewmodel-ktx-2.8.3/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/ec70ac916de18288a3608dbc87f0fd3a/transformed/jetified-lifecycle-viewmodel-ktx-2.8.3/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/b0c97d6008012ba1fd46f55ba007c204/transformed/lifecycle-viewmodel-ktx-2.8.3"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/ec70ac916de18288a3608dbc87f0fd3a/transformed/jetified-lifecycle-viewmodel-ktx-2.8.3"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -382,9 +382,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/57cfe2b7a10bdd687393f0b847b1cdbb/transformed/lifecycle-livedata-core-ktx-2.8.3/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/b44f791273fbdc00303f3363ca0f574e/transformed/jetified-lifecycle-livedata-core-ktx-2.8.3/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/57cfe2b7a10bdd687393f0b847b1cdbb/transformed/lifecycle-livedata-core-ktx-2.8.3"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/b44f791273fbdc00303f3363ca0f574e/transformed/jetified-lifecycle-livedata-core-ktx-2.8.3"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -408,9 +408,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/59acd22346fbcd8b0d5cf09efc4a7406/transformed/lifecycle-runtime-ktx-release/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/cb3609a9ddd8a36aa0672a216917d6b3/transformed/jetified-lifecycle-runtime-ktx-release/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-runtime-ktx-android:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/59acd22346fbcd8b0d5cf09efc4a7406/transformed/lifecycle-runtime-ktx-release"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/cb3609a9ddd8a36aa0672a216917d6b3/transformed/jetified-lifecycle-runtime-ktx-release"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -421,9 +421,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-livedata-ktx:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/5fefd67962fe25b062ea183273fb4776/transformed/lifecycle-livedata-ktx-2.8.3/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/2ff0e4c2cae0b3982cc234836bf9ded9/transformed/jetified-lifecycle-livedata-ktx-2.8.3/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-livedata-ktx:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/5fefd67962fe25b062ea183273fb4776/transformed/lifecycle-livedata-ktx-2.8.3"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/2ff0e4c2cae0b3982cc234836bf9ded9/transformed/jetified-lifecycle-livedata-ktx-2.8.3"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -434,9 +434,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/ef85e5ad655ce86a21e01efb03674c97/transformed/lifecycle-viewmodel-savedstate-2.8.3/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/7eec9d8d00fb2deb5fffdfc3e3339d96/transformed/jetified-lifecycle-viewmodel-savedstate-2.8.3/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/ef85e5ad655ce86a21e01efb03674c97/transformed/lifecycle-viewmodel-savedstate-2.8.3"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/7eec9d8d00fb2deb5fffdfc3e3339d96/transformed/jetified-lifecycle-viewmodel-savedstate-2.8.3"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -447,9 +447,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.core:core-ktx:1.13.1@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/9d010c1684726b26a4e7d852c63da46f/transformed/core-ktx-1.13.1/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/af6244bdce1f16615cbe4038ef4aad14/transformed/jetified-core-ktx-1.13.1/jars/classes.jar"
       resolved="androidx.core:core-ktx:1.13.1"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/9d010c1684726b26a4e7d852c63da46f/transformed/core-ktx-1.13.1"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/af6244bdce1f16615cbe4038ef4aad14/transformed/jetified-core-ktx-1.13.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -460,9 +460,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.savedstate:savedstate-ktx:1.2.1@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/e0a2cb006c587fba777655896bc2794d/transformed/savedstate-ktx-1.2.1/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/1312864bab09d4809f50b190dbbcb6ad/transformed/jetified-savedstate-ktx-1.2.1/jars/classes.jar"
       resolved="androidx.savedstate:savedstate-ktx:1.2.1"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/e0a2cb006c587fba777655896bc2794d/transformed/savedstate-ktx-1.2.1"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/1312864bab09d4809f50b190dbbcb6ad/transformed/jetified-savedstate-ktx-1.2.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -473,9 +473,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.savedstate:savedstate:1.2.1@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/7d5956a1ba13b3b214c3a747ef38ca91/transformed/savedstate-1.2.1/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/095fa2d142076d9509b08f2c5173519f/transformed/jetified-savedstate-1.2.1/jars/classes.jar"
       resolved="androidx.savedstate:savedstate:1.2.1"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/7d5956a1ba13b3b214c3a747ef38ca91/transformed/savedstate-1.2.1"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/095fa2d142076d9509b08f2c5173519f/transformed/jetified-savedstate-1.2.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -486,9 +486,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.annotation:annotation-experimental:1.4.0@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/e51ff6c4f523996628cb325aea5a2ce5/transformed/annotation-experimental-1.4.0/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/b2747c2a15c5aaa906dffcbfd415c546/transformed/jetified-annotation-experimental-1.4.0/jars/classes.jar"
       resolved="androidx.annotation:annotation-experimental:1.4.0"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/e51ff6c4f523996628cb325aea5a2ce5/transformed/annotation-experimental-1.4.0"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/b2747c2a15c5aaa906dffcbfd415c546/transformed/jetified-annotation-experimental-1.4.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -660,9 +660,9 @@
       resolved="androidx.resourceinspection:resourceinspection-annotation:1.0.1"/>
   <library
       name="androidx.emoji2:emoji2-views-helper:1.2.0@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/c1bbc7aeaaaf6467c2b8c058f562989c/transformed/emoji2-views-helper-1.2.0/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/ea5fa17df0bc64845e8470db4942efdb/transformed/jetified-emoji2-views-helper-1.2.0/jars/classes.jar"
       resolved="androidx.emoji2:emoji2-views-helper:1.2.0"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/c1bbc7aeaaaf6467c2b8c058f562989c/transformed/emoji2-views-helper-1.2.0"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/ea5fa17df0bc64845e8470db4942efdb/transformed/jetified-emoji2-views-helper-1.2.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -673,9 +673,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.emoji2:emoji2:1.2.0@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/jars/classes.jar:/home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0/jars/libs/repackaged.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/2a6477b6beac8e3b17a455ab7fec3ec9/transformed/jetified-emoji2-1.2.0/jars/classes.jar:/home/codespace/.gradle/caches/8.9/transforms/2a6477b6beac8e3b17a455ab7fec3ec9/transformed/jetified-emoji2-1.2.0/jars/libs/repackaged.jar"
       resolved="androidx.emoji2:emoji2:1.2.0"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/58c85a3d21f0e2f7b6c8f92430fec24f/transformed/emoji2-1.2.0"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/2a6477b6beac8e3b17a455ab7fec3ec9/transformed/jetified-emoji2-1.2.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -686,9 +686,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.lifecycle:lifecycle-process:2.8.3@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/7f035fe0f6eb36ab69cd792b31eba342/transformed/lifecycle-process-2.8.3/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/aed68e837cdb1c4dff8a7b5d85260c4a/transformed/jetified-lifecycle-process-2.8.3/jars/classes.jar"
       resolved="androidx.lifecycle:lifecycle-process:2.8.3"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/7f035fe0f6eb36ab69cd792b31eba342/transformed/lifecycle-process-2.8.3"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/aed68e837cdb1c4dff8a7b5d85260c4a/transformed/jetified-lifecycle-process-2.8.3"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -699,9 +699,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.profileinstaller:profileinstaller:1.3.1@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/ba045f5a5766505f9ec52285c6a3df6b/transformed/jetified-profileinstaller-1.3.1/jars/classes.jar"
       resolved="androidx.profileinstaller:profileinstaller:1.3.1"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/e38dbb022fddf66b0b73dc82c04cccc2/transformed/profileinstaller-1.3.1"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/ba045f5a5766505f9ec52285c6a3df6b/transformed/jetified-profileinstaller-1.3.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -712,9 +712,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.startup:startup-runtime:1.1.1@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/b2b430f32480baeb05dc40557235a8d9/transformed/startup-runtime-1.1.1/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/c8b8c2fefa8ecc2902165852e04b66a4/transformed/jetified-startup-runtime-1.1.1/jars/classes.jar"
       resolved="androidx.startup:startup-runtime:1.1.1"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/b2b430f32480baeb05dc40557235a8d9/transformed/startup-runtime-1.1.1"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/c8b8c2fefa8ecc2902165852e04b66a4/transformed/jetified-startup-runtime-1.1.1"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -725,9 +725,9 @@
       proguardRules="proguard.txt"/>
   <library
       name="androidx.tracing:tracing:1.0.0@aar"
-      jars="/home/codespace/.gradle/caches/8.9/transforms/f78043235493d47cdbe7f96791a2d364/transformed/tracing-1.0.0/jars/classes.jar"
+      jars="/home/codespace/.gradle/caches/8.9/transforms/f68f69e795c62a7c0aa89d15d89a6077/transformed/jetified-tracing-1.0.0/jars/classes.jar"
       resolved="androidx.tracing:tracing:1.0.0"
-      folder="/home/codespace/.gradle/caches/8.9/transforms/f78043235493d47cdbe7f96791a2d364/transformed/tracing-1.0.0"
+      folder="/home/codespace/.gradle/caches/8.9/transforms/f68f69e795c62a7c0aa89d15d89a6077/transformed/jetified-tracing-1.0.0"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

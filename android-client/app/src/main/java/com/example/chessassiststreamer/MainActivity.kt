@@ -71,11 +71,19 @@ class MainActivity : AppCompatActivity() {
 
     private var currentSocket: Socket? = null
     private var outputStream: DataOutputStream? = null
+    private var inputStream: java.io.DataInputStream? = null
     private val sendMutex = Mutex()
 
     private val isStreaming = AtomicBoolean(false)
     private var selectedCameraId: String? = null
     private var selectedSize: Size = Size(1280, 720)
+    
+    // Camera control parameters
+    private var currentZoom: Float = 1.0f
+    private var currentExposure: Int = 0
+    private var currentFocus: Float = 0.5f
+    private var controlListenerJob: Job? = null
+    private var captureRequestBuilder: CaptureRequest.Builder? = null
 
     private val fpsFormat = DecimalFormat("0.0")
     private var frameCounter = 0
@@ -231,6 +239,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNetworking(ipAddress: String, port: Int) {
         streamingJob?.cancel()
+        controlListenerJob?.cancel()
         streamingJob = streamingScope.launch {
             try {
                 withContext(Dispatchers.Main) {
@@ -241,11 +250,15 @@ class MainActivity : AppCompatActivity() {
                 socket.connect(InetSocketAddress(ipAddress, port), 3000)
                 currentSocket = socket
                 outputStream = DataOutputStream(socket.getOutputStream())
+                inputStream = java.io.DataInputStream(socket.getInputStream())
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@MainActivity, "Connected to $ipAddress:$port", Toast.LENGTH_SHORT).show()
                     statusText.text = "Connected"
                 }
+                
+                // Start listening for control commands
+                startControlListener()
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to connect", e)
                 withContext(Dispatchers.Main) {
@@ -326,6 +339,10 @@ class MainActivity : AppCompatActivity() {
 
                 requestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
                 requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(15, 30))
+                
+                // Store request builder for dynamic updates
+                captureRequestBuilder = requestBuilder
+                applyCameraControls(requestBuilder)
 
                 session.setRepeatingRequest(requestBuilder.build(), null, cameraHandler)
             }
@@ -389,6 +406,8 @@ class MainActivity : AppCompatActivity() {
 
         streamingJob?.cancel()
         streamingJob = null
+        controlListenerJob?.cancel()
+        controlListenerJob = null
 
         streamingScope.launch {
             try {
@@ -400,10 +419,15 @@ class MainActivity : AppCompatActivity() {
             } catch (_: Exception) {
             }
             try {
+                inputStream?.close()
+            } catch (_: Exception) {
+            }
+            try {
                 currentSocket?.close()
             } catch (_: Exception) {
             }
             outputStream = null
+            inputStream = null
             currentSocket = null
         }
 
@@ -563,6 +587,99 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e(TAG, "IP detection failed", e)
             null
+        }
+    }
+    
+    private fun startControlListener() {
+        controlListenerJob?.cancel()
+        controlListenerJob = streamingScope.launch {
+            try {
+                val input = inputStream ?: return@launch
+                val reader = java.io.BufferedReader(java.io.InputStreamReader(input, Charsets.UTF_8))
+                while (isStreaming.get() && isActive) {
+                    try {
+                        val command = reader.readLine() ?: break
+                        handleControlCommand(command)
+                    } catch (e: Exception) {
+                        if (isStreaming.get()) {
+                            Log.e(TAG, "Control listener error", e)
+                        }
+                        break
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Control listener failed", e)
+            }
+        }
+    }
+    
+    private fun handleControlCommand(command: String) {
+        val parts = command.split(":")
+        if (parts.size < 2) return
+        
+        when (parts[0]) {
+            "ZOOM" -> {
+                currentZoom = parts[1].toFloatOrNull()?.coerceIn(1.0f, 10.0f) ?: currentZoom
+                updateCameraSettings()
+            }
+            "EXPOSURE" -> {
+                currentExposure = parts[1].toIntOrNull()?.coerceIn(-12, 12) ?: currentExposure
+                updateCameraSettings()
+            }
+            "FOCUS" -> {
+                currentFocus = parts[1].toFloatOrNull()?.coerceIn(0.0f, 1.0f) ?: currentFocus
+                updateCameraSettings()
+            }
+        }
+    }
+    
+    private fun applyCameraControls(requestBuilder: CaptureRequest.Builder) {
+        try {
+            val cameraId = selectedCameraId ?: return
+            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+            
+            // Apply zoom
+            val maxZoom = characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) ?: 1.0f
+            val zoomRatio = currentZoom.coerceIn(1.0f, maxZoom)
+            val cropRegion = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
+            if (cropRegion != null && zoomRatio > 1.0f) {
+                val centerX = cropRegion.width() / 2
+                val centerY = cropRegion.height() / 2
+                val deltaX = (cropRegion.width() / (2 * zoomRatio)).toInt()
+                val deltaY = (cropRegion.height() / (2 * zoomRatio)).toInt()
+                val zoomRect = Rect(centerX - deltaX, centerY - deltaY, centerX + deltaX, centerY + deltaY)
+                requestBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoomRect)
+            }
+            
+            // Apply exposure compensation
+            val exposureRange = characteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE)
+            if (exposureRange != null) {
+                val exposure = currentExposure.coerceIn(exposureRange.lower, exposureRange.upper)
+                requestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, exposure)
+            }
+            
+            // Apply manual focus if supported
+            val minFocusDistance = characteristics.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) ?: 0f
+            if (minFocusDistance > 0f) {
+                requestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF)
+                requestBuilder.set(CaptureRequest.LENS_FOCUS_DISTANCE, currentFocus * minFocusDistance)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to apply camera controls", e)
+        }
+    }
+    
+    private fun updateCameraSettings() {
+        cameraHandler.post {
+            try {
+                val session = captureSession ?: return@post
+                val builder = captureRequestBuilder ?: return@post
+                
+                applyCameraControls(builder)
+                session.setRepeatingRequest(builder.build(), null, cameraHandler)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to update camera settings", e)
+            }
         }
     }
 

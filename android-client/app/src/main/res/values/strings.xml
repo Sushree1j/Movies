@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">ChessAssist Streamer</string>
-    <string name="ip_hint">Laptop IP address</string>
+    <string name="app_name">Camera Streamer</string>
+    <string name="ip_hint">IP Address</string>
     <string name="port_hint">Port</string>
     <string name="start">Start Streaming</string>
     <string name="stop">Stop Streaming</string>
     <string name="front_camera">Front Camera</string>
     <string name="rear_camera">Rear Camera</string>
-    <string name="resolution">Resolution</string>
+    <string name="resolution">Select Resolution</string>
     <string-array name="resolution_labels">
-        <item>Low (640x480)</item>
-        <item>Medium (1280x720)</item>
-        <item>High (1920x1080)</item>
+        <item>📱 Low (640x480)</item>
+        <item>📺 Medium (1280x720)</item>
+        <item>🎬 High (1920x1080)</item>
     </string-array>
 </resources>

@@ -1356,10 +1356,12 @@ color abc_tint_edittext
 color abc_tint_seek_thumb
 color abc_tint_spinner
 color abc_tint_switch_track
+color accent_color
 color accent_material_dark
 color accent_material_light
 color androidx_core_ripple_material_light
 color androidx_core_secondary_text_default_material_light
+color background_color
 color background_floating_material_dark
 color background_floating_material_light
 color background_material_dark
@@ -1375,6 +1377,7 @@ color button_material_dark
 color button_material_light
 color call_notification_answer_color
 color call_notification_decline_color
+color card_background
 color cardview_dark_background
 color cardview_light_background
 color cardview_shadow_end_color
@@ -1421,6 +1424,7 @@ color dim_foreground_disabled_material_dark
 color dim_foreground_disabled_material_light
 color dim_foreground_material_dark
 color dim_foreground_material_light
+color divider_color
 color error_color_material_dark
 color error_color_material_light
 color foreground_material_dark
@@ -2083,8 +2087,11 @@ color mtrl_textinput_focused_box_stroke_color
 color mtrl_textinput_hovered_box_stroke_color
 color notification_action_color_filter
 color notification_icon_bg_color
+color primary_color
+color primary_dark
 color primary_dark_material_dark
 color primary_dark_material_light
+color primary_light
 color primary_material_dark
 color primary_material_light
 color primary_text_default_material_dark
@@ -2109,6 +2116,8 @@ color switch_thumb_normal_material_dark
 color switch_thumb_normal_material_light
 color teal_200
 color teal_700
+color text_primary
+color text_secondary
 color tooltip_background_dark
 color tooltip_background_light
 color warning_red
@@ -3208,6 +3217,7 @@ id bounceStart
 id buttonPanel
 id cache_measures
 id callMeasure
+id cameraSettingsCard
 id cameraToggleGroup
 id cancel_button
 id carryVelocity
@@ -3232,6 +3242,7 @@ id collapseActionView
 id compatible
 id compress
 id confirm_button
+id connectionCard
 id constraint
 id container
 id content
@@ -3472,6 +3483,7 @@ id portInputLayout
 id position
 id postLayout
 id pressed
+id previewCard
 id previewTextureView
 id progress_circular
 id progress_horizontal
@@ -3546,6 +3558,7 @@ id startToEnd
 id startVertical
 id staticLayout
 id staticPostLayout
+id statusCard
 id statusContainer
 id statusIndicator
 id statusTextView
@@ -3586,6 +3599,7 @@ id textinput_prefix_text
 id textinput_suffix_text
 id time
 id title
+id titleCard
 id titleDividerNoCustom
 id title_template
 id toggle

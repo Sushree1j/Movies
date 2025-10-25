@@ -4,141 +4,134 @@
     <incident
         id="HardcodedText"
         severity="warning"
-        message="Hardcoded string &quot;Idle&quot;, should use `@string` resource">
+        message="Hardcoded string &quot;📹&quot;, should use `@string` resource">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
-            line="136"
-            column="13"
-            startOffset="6068"
-            endLine="136"
-            endColumn="32"
-            endOffset="6087"/>
+            line="37"
+            column="17"
+            startOffset="1427"
+            endLine="37"
+            endColumn="34"
+            endOffset="1444"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="HardcodedText"
         severity="warning"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        message="Hardcoded string &quot;Stream your camera feed&quot;, should use `@string` resource">
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="186"
-            column="30"
-            startOffset="6896"
-            endLine="186"
-            endColumn="36"
-            endOffset="6902"/>
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="52"
+            column="17"
+            startOffset="2006"
+            endLine="52"
+            endColumn="55"
+            endOffset="2044"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="HardcodedText"
         severity="warning"
-        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        message="Hardcoded string &quot;Connection Settings&quot;, should use `@string` resource">
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="186"
-            column="31"
-            startOffset="6897"
-            endLine="186"
-            endColumn="35"
-            endOffset="6901"/>
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="82"
+            column="17"
+            startOffset="3222"
+            endLine="82"
+            endColumn="51"
+            endOffset="3256"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="DisableBaselineAlignment"
         severity="warning"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance">
+        <fix-attribute
+            description="Set baselineAligned=&quot;false&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="baselineAligned"
+            value="false"/>
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="237"
-            column="39"
-            startOffset="8765"
-            endLine="237"
-            endColumn="54"
-            endOffset="8780"/>
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="88"
+            column="14"
+            startOffset="3468"
+            endLine="88"
+            endColumn="26"
+            endOffset="3480"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="HardcodedText"
         severity="warning"
-        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        message="Hardcoded string &quot;Camera Settings&quot;, should use `@string` resource">
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="237"
-            column="40"
-            startOffset="8766"
-            endLine="237"
-            endColumn="53"
-            endOffset="8779"/>
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="160"
+            column="17"
+            startOffset="6913"
+            endLine="160"
+            endColumn="47"
+            endOffset="6943"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="HardcodedText"
         severity="warning"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        message="Hardcoded string &quot;📷 Rear&quot;, should use `@string` resource">
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="247"
-            column="39"
-            startOffset="9265"
-            endLine="247"
-            endColumn="50"
-            endOffset="9276"/>
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="180"
+            column="21"
+            startOffset="7915"
+            endLine="180"
+            endColumn="43"
+            endOffset="7937"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="HardcodedText"
         severity="warning"
-        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        message="Hardcoded string &quot;🤳 Front&quot;, should use `@string` resource">
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="247"
-            column="40"
-            startOffset="9266"
-            endLine="247"
-            endColumn="49"
-            endOffset="9275"/>
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="190"
+            column="21"
+            startOffset="8420"
+            endLine="190"
+            endColumn="44"
+            endOffset="8443"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="HardcodedText"
         severity="warning"
-        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        message="Hardcoded string &quot;Camera Preview&quot;, should use `@string` resource">
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="373"
-            column="35"
-            startOffset="14305"
-            endLine="373"
-            endColumn="75"
-            endOffset="14345"/>
-    </incident>
-
-    <incident
-        id="SetTextI18n"
-        severity="warning"
-        message="String literal in `setText` can not be translated. Use Android resources instead.">
-        <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="373"
-            column="36"
-            startOffset="14306"
-            endLine="373"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="245"
+            column="17"
+            startOffset="10967"
+            endLine="245"
             endColumn="46"
-            endOffset="14316"/>
+            endOffset="10996"/>
     </incident>
 
     <incident
-        id="SetTextI18n"
+        id="HardcodedText"
         severity="warning"
-        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        message="Hardcoded string &quot;Ready to stream&quot;, should use `@string` resource">
         <location
-            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="373"
-            column="70"
-            startOffset="14340"
-            endLine="373"
-            endColumn="74"
-            endOffset="14344"/>
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="304"
+            column="17"
+            startOffset="13339"
+            endLine="304"
+            endColumn="47"
+            endOffset="13369"/>
     </incident>
 
     <incident
@@ -147,12 +140,12 @@
         message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="414"
-            column="31"
-            startOffset="15283"
-            endLine="414"
-            endColumn="37"
-            endOffset="15289"/>
+            line="194"
+            column="30"
+            startOffset="7239"
+            endLine="194"
+            endColumn="36"
+            endOffset="7245"/>
     </incident>
 
     <incident
@@ -161,12 +154,138 @@
         message="String literal in `setText` can not be translated. Use Android resources instead.">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="414"
+            line="194"
+            column="31"
+            startOffset="7240"
+            endLine="194"
+            endColumn="35"
+            endOffset="7244"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="246"
+            column="39"
+            startOffset="9145"
+            endLine="246"
+            endColumn="54"
+            endOffset="9160"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="246"
+            column="40"
+            startOffset="9146"
+            endLine="246"
+            endColumn="53"
+            endOffset="9159"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="257"
+            column="39"
+            startOffset="9724"
+            endLine="257"
+            endColumn="50"
+            endOffset="9735"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="257"
+            column="40"
+            startOffset="9725"
+            endLine="257"
+            endColumn="49"
+            endOffset="9734"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="390"
+            column="35"
+            startOffset="15061"
+            endLine="390"
+            endColumn="75"
+            endOffset="15101"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="390"
+            column="36"
+            startOffset="15062"
+            endLine="390"
+            endColumn="46"
+            endOffset="15072"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="390"
+            column="70"
+            startOffset="15096"
+            endLine="390"
+            endColumn="74"
+            endOffset="15100"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="438"
+            column="31"
+            startOffset="16247"
+            endLine="438"
+            endColumn="37"
+            endOffset="16253"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
+            line="438"
             column="32"
-            startOffset="15284"
-            endLine="414"
+            startOffset="16248"
+            endLine="438"
             endColumn="36"
-            endOffset="15288"/>
+            endOffset="16252"/>
     </incident>
 
     <incident
@@ -175,12 +294,12 @@
         message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead">
         <location
             file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/example/chessassiststreamer/MainActivity.kt"
-            line="536"
+            line="560"
             column="24"
-            startOffset="19223"
-            endLine="542"
+            startOffset="20187"
+            endLine="566"
             endColumn="18"
-            endOffset="19441"/>
+            endOffset="20405"/>
     </incident>
 
     <incident
@@ -421,6 +540,20 @@
             endLine="64"
             endColumn="75"
             endOffset="2026"/>
+    </incident>
+
+    <incident
+        id="Overdraw"
+        severity="warning"
+        message="Possible overdraw: Root element paints background `@color/background_color` with a theme that also paints a background (inferred theme is `@style/Theme_ChessAssistStreamer`)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="7"
+            column="5"
+            startOffset="289"
+            endLine="7"
+            endColumn="49"
+            endOffset="333"/>
     </incident>
 
 </incidents>
