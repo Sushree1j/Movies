@@ -39,7 +39,7 @@ This project consists of two main components:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/camera-streamer.git
+   git clone https://github.com/Sushree1j/camera-streamer.git
    cd camera-streamer
    ```
 
@@ -162,9 +162,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🐛 Issues & Support
 
-- **Bug Reports**: [GitHub Issues](https://github.com/yourusername/camera-streamer/issues)
-- **Feature Requests**: [GitHub Issues](https://github.com/yourusername/camera-streamer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/camera-streamer/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/Sushree1j/camera-streamer/issues)
+- **Feature Requests**: [GitHub Issues](https://github.com/Sushree1j/camera-streamer/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Sushree1j/camera-streamer/discussions)
 
 ## 🙏 Acknowledgments
 
