@@ -6,7 +6,7 @@ Thank you for your interest in contributing to Camera Streamer! We welcome contr
 
 ### 1. Fork the Repository
 - Click the "Fork" button on GitHub
-- Clone your fork: `git clone https://github.com/yourusername/camera-streamer.git`
+- Clone your fork: `git clone https://github.com/Sushree1j/camera-streamer.git`
 
 ### 2. Create a Feature Branch
 ```bash
