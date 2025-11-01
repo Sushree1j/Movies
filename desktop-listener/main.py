@@ -8,7 +8,7 @@ import time
 import tkinter as tk
 from dataclasses import dataclass
 from tkinter import ttk
-from typing import Optional
+from typing import Optional, Tuple
 
 from PIL import Image, ImageTk
 
@@ -24,10 +24,21 @@ class ToolTip:
         self.widget = widget
         self.text = text
         self.tooltip_window = None
+        self._show_id = None
+        self._hide_id = None
         self.widget.bind("<Enter>", self.show_tooltip)
         self.widget.bind("<Leave>", self.hide_tooltip)
 
     def show_tooltip(self, event=None):
+        # Cancel any pending hide operation
+        if self._hide_id is not None:
+            self.widget.after_cancel(self._hide_id)
+            self._hide_id = None
+        
+        # Don't create multiple tooltip windows
+        if self.tooltip_window is not None:
+            return
+            
         x, y, _, _ = self.widget.bbox("insert")
         x += self.widget.winfo_rootx() + 25
         y += self.widget.winfo_rooty() + 25
@@ -41,8 +52,16 @@ class ToolTip:
         label.pack()
 
     def hide_tooltip(self, event=None):
+        # Cancel any pending show operation
+        if self._show_id is not None:
+            self.widget.after_cancel(self._show_id)
+            self._show_id = None
+            
         if self.tooltip_window:
-            self.tooltip_window.destroy()
+            try:
+                self.tooltip_window.destroy()
+            except tk.TclError:
+                pass
             self.tooltip_window = None
 
 
@@ -104,6 +123,8 @@ class VideoServer:
     def _handle_client(self, client_socket: socket.socket, address) -> None:
         with client_socket:
             client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            # Increase receive buffer for better throughput
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 512 * 1024)
             client_socket.settimeout(5.0)
             self._client_output_stream = client_socket
             frame_count = 0
@@ -138,10 +159,12 @@ class VideoServer:
             self._client_output_stream = None
 
     def _push_frame(self, frame_data: bytes, timestamp: float) -> None:
-        try:
-            self.frame_queue.get_nowait()
-        except queue.Empty:
-            pass
+        # Drop old frames if queue is full - more efficient than get/put dance
+        if self.frame_queue.full():
+            try:
+                self.frame_queue.get_nowait()
+            except queue.Empty:
+                pass
         try:
             self.frame_queue.put_nowait((frame_data, timestamp))
         except queue.Full:
@@ -201,6 +224,9 @@ class ViewerApp(tk.Tk):
 
         self._photo_image: Optional[ImageTk.PhotoImage] = None
         self._current_image_ts: float = 0.0
+        self._cached_display_size: Optional[Tuple[int, int]] = None
+        self._last_label_size: Tuple[int, int] = (0, 0)
+        self._frame_count: int = 0  # Count frames to throttle UI updates
 
         self._build_ui(args)
         self.server.start()
@@ -459,28 +485,23 @@ class ViewerApp(tk.Tk):
                                      command=self._stop_server, style='TButton', width=10)
         self.stop_button.pack(side=tk.RIGHT)
 
-    def _refresh_stats(self) -> None:
-        """Update the FPS and latency display"""
-        if hasattr(self, 'fps_var'):
-            self.fps_var.set(f"FPS: {self.stats.fps:.1f}")
-        if hasattr(self, 'latency_var'):
-            self.latency_var.set(f"Latency: {self.stats.latency_ms:.0f}ms")
-        self.after(500, self._refresh_stats)
-
     def _poll_frames(self) -> None:
+        """Poll for new frames from the queue"""
         try:
             frame_data, timestamp = self.frame_queue.get_nowait()
+            self._display_frame(frame_data, timestamp)
         except queue.Empty:
             pass
-        else:
-            self._display_frame(frame_data, timestamp)
-        finally:
-            self.after(10, self._poll_frames)
+        
+        # Poll at ~60 FPS (every 17ms) to reduce CPU usage
+        self.after(17, self._poll_frames)
 
     def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
+        """Display a frame in the video label"""
         try:
             image = Image.open(io.BytesIO(frame_data)).convert("RGB")
-            image = image.resize(self._compute_display_size(image.size), RESAMPLE_LANCZOS)
+            display_size = self._compute_display_size(image.size)
+            image = image.resize(display_size, RESAMPLE_LANCZOS)
             self._photo_image = ImageTk.PhotoImage(image)
             self.video_label.configure(image=self._photo_image, text="")
             now = time.time()
@@ -490,15 +511,24 @@ class ViewerApp(tk.Tk):
         except Exception:
             return
 
-    def _compute_display_size(self, image_size: tuple[int, int]) -> tuple[int, int]:
+    def _compute_display_size(self, image_size: Tuple[int, int]) -> Tuple[int, int]:
+        """Compute optimal display size for image, with caching"""
         label_width = max(self.video_label.winfo_width(), 320)
         label_height = max(self.video_label.winfo_height(), 240)
+        current_label_size = (label_width, label_height)
+        
+        # Cache display size if label size hasn't changed
+        if self._cached_display_size is not None and self._last_label_size == current_label_size:
+            return self._cached_display_size
+        
         image_width, image_height = image_size
-
         width_ratio = label_width / image_width
         height_ratio = label_height / image_height
         scale = min(width_ratio, height_ratio)
-        return int(image_width * scale), int(image_height * scale)
+        
+        self._last_label_size = current_label_size
+        self._cached_display_size = (int(image_width * scale), int(image_height * scale))
+        return self._cached_display_size
 
     def _refresh_stats(self) -> None:
         """Update the FPS and latency display"""
