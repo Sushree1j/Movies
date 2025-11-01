@@ -333,7 +333,7 @@ class MainActivity : AppCompatActivity() {
             texture.setDefaultBufferSize(previewSize.width, previewSize.height)
             previewSurface = Surface(texture)
 
-            imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, ImageFormat.YUV_420_888, 1)
+            imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, ImageFormat.YUV_420_888, 1)  // Single buffer for minimal latency
             imageReader?.setOnImageAvailableListener({ reader ->
                 // Use acquireLatestImage to skip old frames for better real-time performance
                 val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
@@ -394,7 +394,8 @@ class MainActivity : AppCompatActivity() {
                 imageReader?.surface?.let { requestBuilder.addTarget(it) }
 
                 requestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
-                requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(60, 60))
+                // Target 30-60 fps for smooth, high frame rate streaming
+                requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(30, 60))
                 
                 // Store request builder for dynamic updates
                 captureRequestBuilder = requestBuilder
