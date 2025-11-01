@@ -498,8 +498,7 @@ class ViewerApp(tk.Tk):
         # Cache display size if label size hasn't changed
         current_label_size = (label_width, label_height)
         if (self._cached_display_size is not None and 
-            self._last_label_size == current_label_size and
-            len(self._cached_display_size) == 2):
+            self._last_label_size == current_label_size):
             return self._cached_display_size
         
         image_width, image_height = image_size

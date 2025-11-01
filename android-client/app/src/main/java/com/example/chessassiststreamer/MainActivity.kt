@@ -539,9 +539,7 @@ class MainActivity : AppCompatActivity() {
         if (uvStride == 2) {
             // Interleaved UV: read directly into nv21 buffer
             var uvIndex = ySize
-            vBuffer.position(0)
-            uBuffer.position(0)
-            while (uvIndex < totalSize - 1 && vBuffer.hasRemaining() && uBuffer.hasRemaining()) {
+            while (uvIndex + 1 < totalSize && vBuffer.hasRemaining() && uBuffer.hasRemaining()) {
                 nv21[uvIndex++] = vBuffer.get()
                 nv21[uvIndex++] = uBuffer.get()
             }
