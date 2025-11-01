@@ -6,7 +6,7 @@ import struct
 import threading
 import time
 import tkinter as tk
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from tkinter import ttk
 from typing import Optional, Dict, List
 import json
@@ -604,7 +604,8 @@ class ViewerApp(tk.Tk):
                 stats.latency_ms = max((now - timestamp) * 1000.0, 0.0)
             
             self._current_image_ts = now
-        except Exception as e:
+        except Exception:
+            # Silently ignore frame display errors to avoid disrupting stream
             return
 
     def _compute_display_size(self, image_size: tuple[int, int]) -> tuple[int, int]:
@@ -656,7 +657,8 @@ class ViewerApp(tk.Tk):
                 image = image.filter(ImageFilter.EDGE_ENHANCE)
             
             return image
-        except Exception as e:
+        except Exception:
+            # Return original image if processing fails
             return image
 
     def _refresh_stats(self) -> None:
@@ -756,23 +758,38 @@ class ViewerApp(tk.Tk):
         port_entry.grid(row=2, column=1, pady=10, padx=10)
         port_entry.insert(0, str(5000 + len(self.cameras)))
         
+        error_label = ttk.Label(frame, text="", foreground='red', background='#ffffff', style='TLabel')
+        error_label.grid(row=4, column=0, columnspan=2, pady=(0, 10))
+        
         def add_camera():
             name = name_entry.get().strip()
             host = host_entry.get().strip()
             try:
                 port = int(port_entry.get().strip())
-                if name and host and 1024 <= port <= 65535:
-                    self._add_camera(name, host, port)
-                    self.cameras[name]['server'].start()
-                    # Update camera dropdown
-                    self.camera_dropdown['values'] = list(self.cameras.keys())
-                    dialog.destroy()
+                if not name:
+                    error_label.config(text="Please enter a camera name")
+                    return
+                if not host:
+                    error_label.config(text="Please enter a host/IP address")
+                    return
+                if port < 1024 or port > 65535:
+                    error_label.config(text="Port must be between 1024 and 65535")
+                    return
+                if name in self.cameras:
+                    error_label.config(text=f"Camera '{name}' already exists")
+                    return
+                    
+                self._add_camera(name, host, port)
+                self.cameras[name]['server'].start()
+                # Update camera dropdown
+                self.camera_dropdown['values'] = list(self.cameras.keys())
+                dialog.destroy()
             except ValueError:
-                pass
+                error_label.config(text="Invalid port number")
         
         # Buttons
         button_frame = ttk.Frame(frame, style='Card.TFrame')
-        button_frame.grid(row=3, column=0, columnspan=2, pady=20)
+        button_frame.grid(row=5, column=0, columnspan=2, pady=20)
         
         ttk.Button(button_frame, text="Add", command=add_camera, style='TButton').pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Cancel", command=dialog.destroy, style='TButton').pack(side=tk.LEFT, padx=5)
