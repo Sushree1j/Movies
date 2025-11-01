@@ -115,6 +115,8 @@ class VideoServer:
     def _handle_client(self, client_socket: socket.socket, address) -> None:
         with client_socket:
             client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 512 * 1024)  # 512KB receive buffer
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 64 * 1024)  # 64KB send buffer
             client_socket.settimeout(5.0)
             self._client_output_stream = client_socket
             frame_count = 0
@@ -167,15 +169,17 @@ class VideoServer:
             self._client_output_stream = None
 
     def _push_frame(self, frame_data: bytes, timestamp: float) -> None:
-        # Only drop old frame if queue is full
+        # Drop old frames immediately for minimal latency - only keep latest frame
         try:
+            # Clear queue completely to ensure we always show the latest frame
+            while True:
+                try:
+                    self.frame_queue.get_nowait()
+                except queue.Empty:
+                    break
             self.frame_queue.put_nowait((frame_data, timestamp))
         except queue.Full:
-            try:
-                self.frame_queue.get_nowait()
-                self.frame_queue.put_nowait((frame_data, timestamp))
-            except (queue.Empty, queue.Full):
-                pass
+            pass
         self.stats.last_updated = timestamp
 
     def _recvall(self, client_socket: socket.socket, length: int) -> Optional[bytes]:
@@ -248,7 +252,7 @@ class ViewerApp(tk.Tk):
             camera['server'].start()
             
         self.protocol("WM_DELETE_WINDOW", self._on_close)
-        self.after(10, self._poll_frames)
+        self.after(8, self._poll_frames)  # ~8ms for 120Hz polling (2x 60fps for smooth handling)
         self.after(500, self._refresh_stats)
     
     def _add_camera(self, camera_id: str, host: str, port: int) -> None:
@@ -581,7 +585,7 @@ class ViewerApp(tk.Tk):
         except queue.Empty:
             pass
         finally:
-            self.after(10, self._poll_frames)
+            self.after(8, self._poll_frames)  # ~8ms for 120Hz polling
 
     def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
         try:

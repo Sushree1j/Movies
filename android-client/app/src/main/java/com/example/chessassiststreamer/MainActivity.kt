@@ -268,6 +268,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 val socket = Socket()
                 socket.tcpNoDelay = true
+                socket.sendBufferSize = 512 * 1024  // 512KB send buffer for smooth streaming
+                socket.receiveBufferSize = 64 * 1024  // 64KB receive buffer
                 socket.connect(InetSocketAddress(ipAddress, port), 3000)
                 currentSocket = socket
                 outputStream = DataOutputStream(socket.getOutputStream())
@@ -331,7 +333,7 @@ class MainActivity : AppCompatActivity() {
             texture.setDefaultBufferSize(previewSize.width, previewSize.height)
             previewSurface = Surface(texture)
 
-            imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, ImageFormat.YUV_420_888, 2)
+            imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, ImageFormat.YUV_420_888, 1)
             imageReader?.setOnImageAvailableListener({ reader ->
                 // Use acquireLatestImage to skip old frames for better real-time performance
                 val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
@@ -392,7 +394,7 @@ class MainActivity : AppCompatActivity() {
                 imageReader?.surface?.let { requestBuilder.addTarget(it) }
 
                 requestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
-                requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(15, 30))
+                requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, Range(60, 60))
                 
                 // Store request builder for dynamic updates
                 captureRequestBuilder = requestBuilder
