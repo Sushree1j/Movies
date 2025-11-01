@@ -580,8 +580,8 @@ class MainActivity : AppCompatActivity() {
             if (uvStride == 2) {
                 // Interleaved UV planes - read directly from buffers
                 var uvIndex = ySize
-                // Ensure we have space for both V and U bytes
-                while (uBuffer.hasRemaining() && vBuffer.hasRemaining() && uvIndex < nv21.size - 1) {
+                // Ensure we have space for both V and U bytes (2 bytes per iteration)
+                while (uBuffer.hasRemaining() && vBuffer.hasRemaining() && uvIndex + 1 < nv21.size) {
                     nv21[uvIndex++] = vBuffer.get()
                     nv21[uvIndex++] = uBuffer.get()
                 }
@@ -650,6 +650,7 @@ class MainActivity : AppCompatActivity() {
                 val buffer = ByteArray(256) // Buffer for reading commands
                 var partialLine = StringBuilder()
                 
+                // Use non-blocking reads for control commands to avoid interfering with streaming
                 while (isStreaming.get() && isActive) {
                     try {
                         val available = input.available()
