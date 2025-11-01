@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Camera Streamer</string>
+    <string name="app_name">Camera Streamer Pro</string>
     <string name="ip_hint">IP Address</string>
     <string name="port_hint">Port</string>
     <string name="start">Start Streaming</string>
@@ -7,9 +7,19 @@
     <string name="front_camera">Front Camera</string>
     <string name="rear_camera">Rear Camera</string>
     <string name="resolution">Select Resolution</string>
+    <string name="camera_settings">Camera Settings</string>
+    <string name="stream_quality">Stream Quality</string>
+    <string name="connection_settings">Connection Settings</string>
+    <string name="add_camera">Add Camera</string>
+    <string name="camera_name">Camera Name</string>
     <string-array name="resolution_labels">
         <item>📱 Low (640x480)</item>
         <item>📺 Medium (1280x720)</item>
         <item>🎬 High (1920x1080)</item>
+    </string-array>
+    <string-array name="quality_labels">
+        <item>🔋 Battery Saver (60%)</item>
+        <item>⚡ Balanced (80%)</item>
+        <item>💎 High Quality (95%)</item>
     </string-array>
 </resources>

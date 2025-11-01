@@ -1,15 +1,34 @@
-# Camera Streamer 📹
+# Camera Streamer Pro 📹
 
-A modern Android application that streams your device's camera feed to a desktop application in real-time. Perfect for remote monitoring, presentations, or computer vision applications.
+A modern, feature-rich Android application that streams your device's camera feed to a desktop application in real-time with advanced controls and multi-camera support. Perfect for remote monitoring, presentations, or computer vision applications.
 
 ## ✨ Features
 
+### 🎥 Core Streaming
 - **Real-time Camera Streaming**: Stream live camera feed from your Android device
+- **Multiple Camera Support**: Connect and stream from multiple Android devices simultaneously
 - **Dual Camera Support**: Choose between front and rear cameras
 - **Multiple Resolution Options**: Low (640x480), Medium (1280x720), High (1920x1080)
-- **Modern UI**: Beautiful Material Design 3 interface with card-based layout
-- **Network Streaming**: Stream over WiFi to desktop applications
-- **Easy Setup**: Simple IP address and port configuration
+- **Adjustable Quality Settings**: Battery Saver (60%), Balanced (80%), High Quality (95%)
+
+### 🎛️ Advanced Controls
+- **Camera Controls** (Android to Desktop):
+  - Digital Zoom: 1x to 10x magnification
+  - Exposure Compensation: -12 to +12 adjustment
+  - Manual Focus: Fine-tune focus distance
+  
+- **Image Processing** (Desktop-side):
+  - Brightness: 0.0 to 2.0 adjustment
+  - Contrast: 0.0 to 2.0 adjustment
+  - Saturation: 0.0 to 2.0 adjustment
+  - Video Filters: Grayscale, Blur, Sharpen, Edge Enhance
+
+### 🎨 Enhanced UI/UX
+- **Modern Material Design 3**: Beautiful, intuitive interface on Android
+- **Multi-Camera Management**: Add and switch between multiple camera streams
+- **Real-time Statistics**: FPS, latency, and connection status
+- **Camera Identification**: Custom camera naming for easy identification
+- **Responsive Layout**: Optimized for various screen sizes
 
 ## 🏗️ Architecture
 
@@ -19,12 +38,15 @@ This project consists of two main components:
 - Built with Kotlin and Android Camera2 API
 - Material Design 3 UI with modern card-based interface
 - Supports both front and rear camera streaming
-- Configurable resolution and network settings
+- Configurable resolution, quality, and network settings
+- Real-time camera control via bidirectional communication
 
 ### Desktop Listener (`desktop-listener/`)
-- Python-based desktop application
-- Receives and displays the camera stream
-- Simple setup and configuration
+- Python-based desktop application using Tkinter
+- Multi-camera stream management
+- Advanced image processing with PIL/Pillow
+- Real-time control commands to Android client
+- Modern, responsive UI with tooltips and visual feedback
 
 ## 🚀 Quick Start
 
@@ -34,6 +56,7 @@ This project consists of two main components:
 - **Java**: JDK 17 or higher
 - **Android SDK**: API level 34
 - **Python**: 3.8+ (for desktop listener)
+- **Pillow**: 10.0.0+ (Python imaging library)
 
 ### Building the Android App
 
@@ -70,17 +93,48 @@ This project consists of two main components:
    ```bash
    python main.py
    ```
+   
+   Or specify custom host/port:
+   ```bash
+   python main.py --host 0.0.0.0 --port 5000
+   ```
 
 ## 📱 Usage
 
+### Android App Setup
+
 1. **Launch the app** on your Android device
-2. **Enter connection details:**
-   - IP address of your desktop computer
-   - Port number (default: usually 8080 or similar)
-3. **Select camera** (front or rear)
-4. **Choose resolution** based on your needs
-5. **Start streaming** by tapping the "Start Streaming" button
-6. **View the stream** on your desktop application
+2. **Configure camera:**
+   - Give your camera a custom name (e.g., "Front Camera", "Rear Camera")
+   - Select camera facing (front or rear)
+   - Choose resolution based on your needs (Low/Medium/High)
+   - Select quality setting (Battery Saver/Balanced/High Quality)
+3. **Enter connection details:**
+   - IP address of your desktop computer running the listener
+   - Port number (default: 5000)
+4. **Start streaming** by tapping the "Start Streaming" button
+
+### Desktop Listener Features
+
+1. **View live stream** from connected camera
+2. **Add multiple cameras:**
+   - Click "➕ Add Camera" to add another camera stream
+   - Each camera can run on a different port
+3. **Switch between cameras:**
+   - Use the "Active Camera" dropdown to switch views
+4. **Adjust camera settings** (sent to Android device):
+   - Zoom: 1x to 10x digital zoom
+   - Exposure: -12 to +12 compensation
+   - Focus: Manual focus control (0.0 to 1.0)
+5. **Apply image processing** (desktop-side):
+   - Brightness: Adjust image brightness (0.0 to 2.0)
+   - Contrast: Adjust image contrast (0.0 to 2.0)
+   - Saturation: Adjust color saturation (0.0 to 2.0)
+   - Filters: Apply visual effects (Grayscale, Blur, Sharpen, Edge Enhance)
+6. **Monitor performance:**
+   - Real-time FPS counter
+   - Network latency display
+   - Connection status indicator
 
 ## 🔧 Configuration
 
@@ -90,7 +144,30 @@ This project consists of two main components:
 
 ### Camera Settings
 - **Camera Selection**: Toggle between front and rear cameras
+- **Camera Naming**: Give each camera a custom identifier
 - **Resolution**: Choose appropriate resolution based on network speed and quality needs
+- **Quality Settings**: Balance between battery life and image quality
+
+### Stream Control Settings
+- **Zoom**: Digital zoom from 1x to 10x (Android-side)
+- **Exposure**: Compensation from -12 to +12 (Android-side)
+- **Focus**: Manual focus control from 0.0 (infinity) to 1.0 (closest) (Android-side)
+- **Brightness**: Desktop-side brightness adjustment (0.0 to 2.0)
+- **Contrast**: Desktop-side contrast adjustment (0.0 to 2.0)
+- **Saturation**: Desktop-side saturation adjustment (0.0 to 2.0)
+- **Filters**: Apply real-time video effects on desktop
+
+### Multi-Camera Setup
+1. **Start the desktop listener** on your computer (default port 5000)
+2. **Add additional cameras**:
+   - Click "➕ Add Camera" in the desktop app
+   - Enter camera name, host (0.0.0.0), and port (e.g., 5001, 5002)
+   - Click "Add"
+3. **Configure each Android device**:
+   - Set unique camera name on each device
+   - Use desktop IP and respective port (5000, 5001, 5002, etc.)
+   - Start streaming from each device
+4. **Switch between cameras** using the dropdown in desktop app
 
 ## 🛠️ Development
 
@@ -100,14 +177,38 @@ This project consists of two main components:
 2. **Sync Gradle** files
 3. **Run on device/emulator**
 
+### Desktop Development Setup
+
+1. **Create virtual environment** (recommended):
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Run the application**:
+   ```bash
+   python main.py
+   ```
+
 ### Key Technologies Used
 
+#### Android
 - **Kotlin**: Primary programming language
-- **Android Camera2 API**: Camera access and streaming
+- **Android Camera2 API**: Low-level camera access and streaming
 - **Material Design 3**: Modern UI components
 - **ConstraintLayout**: Responsive layouts
 - **Coroutines**: Asynchronous operations
-- **CameraX**: Camera lifecycle management
+- **JSON**: Camera metadata transmission
+
+#### Desktop
+- **Python 3**: Core application language
+- **Tkinter**: GUI framework
+- **Pillow (PIL)**: Image processing library
+- **Threading**: Concurrent frame processing
+- **Socket Programming**: Network communication
 
 ### Project Structure
 
@@ -116,7 +217,7 @@ android-client/
 ├── app/
 │   ├── src/main/
 │   │   ├── java/com/example/chessassiststreamer/
-│   │   │   └── MainActivity.kt          # Main activity
+│   │   │   └── MainActivity.kt          # Main activity with camera logic
 │   │   ├── res/                         # Resources
 │   │   │   ├── drawable/                # Icons and graphics
 │   │   │   ├── layout/                  # UI layouts

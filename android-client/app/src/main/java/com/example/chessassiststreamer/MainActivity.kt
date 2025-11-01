@@ -62,6 +62,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var frontCameraButton: MaterialButton
     private lateinit var rearCameraButton: MaterialButton
     private lateinit var resolutionSpinner: MaterialAutoCompleteTextView
+    private lateinit var qualitySpinner: MaterialAutoCompleteTextView
+    private lateinit var cameraNameEditText: TextInputEditText
 
     private val cameraThread = HandlerThread("CameraThread")
     private lateinit var cameraHandler: Handler
@@ -77,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     private val isStreaming = AtomicBoolean(false)
     private var selectedCameraId: String? = null
     private var selectedSize: Size = Size(1280, 720)
+    private var jpegQuality: Int = 80  // Default quality
     
     // Camera control parameters
     private var currentZoom: Float = 1.0f
@@ -135,6 +138,8 @@ class MainActivity : AppCompatActivity() {
         frontCameraButton = findViewById(R.id.frontCameraButton)
         rearCameraButton = findViewById(R.id.rearCameraButton)
         resolutionSpinner = findViewById(R.id.resolutionSpinner)
+        qualitySpinner = findViewById(R.id.qualitySpinner)
+        cameraNameEditText = findViewById(R.id.cameraNameEditText)
     }
 
     private fun configureUi() {
@@ -169,6 +174,17 @@ class MainActivity : AppCompatActivity() {
             }
             if (isStreaming.get()) {
                 restartCamera()
+            }
+        }
+        
+        val qualityItems = resources.getStringArray(R.array.quality_labels)
+        qualitySpinner.setSimpleItems(qualityItems)
+        qualitySpinner.setText(qualityItems[1], false)
+        qualitySpinner.setOnItemClickListener { _, _, position, _ ->
+            jpegQuality = when (position) {
+                0 -> 60  // Battery Saver
+                1 -> 80  // Balanced
+                else -> 95  // High Quality
             }
         }
 
@@ -256,6 +272,9 @@ class MainActivity : AppCompatActivity() {
                 outputStream = DataOutputStream(socket.getOutputStream())
                 inputStream = java.io.DataInputStream(socket.getInputStream())
 
+                // Send camera metadata
+                sendCameraMetadata()
+
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@MainActivity, "Connected to $ipAddress:$port", Toast.LENGTH_SHORT).show()
                     statusText.text = "Connected"
@@ -270,6 +289,30 @@ class MainActivity : AppCompatActivity() {
                     stopStreaming()
                 }
             }
+        }
+    }
+    
+    private suspend fun sendCameraMetadata() {
+        try {
+            val cameraName = cameraNameEditText.text?.toString() ?: "Camera"
+            val cameraFacing = if (frontCameraButton.isChecked) "front" else "rear"
+            val metadata = org.json.JSONObject().apply {
+                put("camera_id", cameraName)
+                put("camera_facing", cameraFacing)
+                put("resolution", "${selectedSize.width}x${selectedSize.height}")
+                put("quality", jpegQuality)
+            }
+            
+            val metadataBytes = metadata.toString().toByteArray(Charsets.UTF_8)
+            val output = outputStream ?: return
+            
+            sendMutex.withLock {
+                output.writeInt(metadataBytes.size)
+                output.write(metadataBytes)
+                output.flush()
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to send metadata", e)
         }
     }
 
@@ -293,7 +336,7 @@ class MainActivity : AppCompatActivity() {
                 val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
                 try {
                     if (isStreaming.get()) {
-                        val jpegBytes = image.toJpegBytes(80)
+                        val jpegBytes = image.toJpegBytes(jpegQuality)
                         if (jpegBytes != null) {
                             sendFrame(jpegBytes)
                         }
