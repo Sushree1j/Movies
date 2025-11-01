@@ -197,4 +197,7 @@ ENV/
 /site
 
 # mypy
-.mypy_cache/*_backup.py
+.mypy_cache/
+
+# Backup files
+*_backup.py

@@ -34,6 +34,7 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.net.InetAddress
@@ -296,7 +297,7 @@ class MainActivity : AppCompatActivity() {
         try {
             val cameraName = cameraNameEditText.text?.toString() ?: "Camera"
             val cameraFacing = if (frontCameraButton.isChecked) "front" else "rear"
-            val metadata = org.json.JSONObject().apply {
+            val metadata = JSONObject().apply {
                 put("camera_id", cameraName)
                 put("camera_facing", cameraFacing)
                 put("resolution", "${selectedSize.width}x${selectedSize.height}")

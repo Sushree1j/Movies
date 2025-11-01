@@ -411,10 +411,10 @@ class ViewerApp(tk.Tk):
         
         ttk.Label(camera_frame, text="📷 Active Camera:", style='Control.TLabel').pack(side=tk.LEFT, padx=(5, 10))
         self.camera_var = tk.StringVar(value="Camera 1")
-        camera_dropdown = ttk.Combobox(camera_frame, textvariable=self.camera_var, 
+        self.camera_dropdown = ttk.Combobox(camera_frame, textvariable=self.camera_var, 
                                       values=list(self.cameras.keys()), state='readonly', width=15)
-        camera_dropdown.pack(side=tk.LEFT, padx=(0, 20))
-        camera_dropdown.bind('<<ComboboxSelected>>', lambda e: self._switch_camera(self.camera_var.get()))
+        self.camera_dropdown.pack(side=tk.LEFT, padx=(0, 20))
+        self.camera_dropdown.bind('<<ComboboxSelected>>', lambda e: self._switch_camera(self.camera_var.get()))
         
         # Add camera button
         add_cam_btn = ttk.Button(camera_frame, text="➕ Add Camera", 
@@ -510,6 +510,15 @@ class ViewerApp(tk.Tk):
         elif label_text == "🎯 Focus":
             var.set(0.5)
             ToolTip(scale, "Manual focus: 0.0 (infinity) to 1.0 (closest)")
+        elif label_text == "💡 Brightness":
+            var.set(1.0)
+            ToolTip(scale, "Image brightness: 0.0 (black) to 2.0 (very bright)")
+        elif label_text == "◐ Contrast":
+            var.set(1.0)
+            ToolTip(scale, "Image contrast: 0.0 (no contrast) to 2.0 (high contrast)")
+        elif label_text == "🎨 Saturation":
+            var.set(1.0)
+            ToolTip(scale, "Color saturation: 0.0 (grayscale) to 2.0 (vivid colors)")
 
         # Configure grid weights
         parent.grid_columnconfigure(1, weight=1)
@@ -756,15 +765,7 @@ class ViewerApp(tk.Tk):
                     self._add_camera(name, host, port)
                     self.cameras[name]['server'].start()
                     # Update camera dropdown
-                    camera_dropdown = None
-                    for widget in self.winfo_children():
-                        if isinstance(widget, ttk.Frame):
-                            for child in widget.winfo_children():
-                                if isinstance(child, ttk.Combobox) and child['textvariable'] == str(self.camera_var):
-                                    camera_dropdown = child
-                                    break
-                    if camera_dropdown:
-                        camera_dropdown['values'] = list(self.cameras.keys())
+                    self.camera_dropdown['values'] = list(self.cameras.keys())
                     dialog.destroy()
             except ValueError:
                 pass
