@@ -170,15 +170,17 @@ class VideoServer:
 
     def _push_frame(self, frame_data: bytes, timestamp: float) -> None:
         # Drop old frames immediately for minimal latency - only keep latest frame
+        # Clear queue completely to ensure we always show the latest frame
+        while not self.frame_queue.empty():
+            try:
+                self.frame_queue.get_nowait()
+            except queue.Empty:
+                break
+        # Add the new frame
         try:
-            # Clear queue completely to ensure we always show the latest frame
-            while True:
-                try:
-                    self.frame_queue.get_nowait()
-                except queue.Empty:
-                    break
             self.frame_queue.put_nowait((frame_data, timestamp))
         except queue.Full:
+            # Should not happen since we just cleared the queue, but handle gracefully
             pass
         self.stats.last_updated = timestamp
 
