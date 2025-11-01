@@ -213,9 +213,18 @@ class ViewerApp(tk.Tk):
     def __init__(self, args: argparse.Namespace):
         super().__init__()
         self.title("🎥 Camera Streamer - Multi-Camera Viewer")
-        self.geometry("1600x900")
+        self.geometry("1920x1080")  # Larger window for bigger video preview
         self.resizable(True, True)
         self.configure(bg='#f5f7fa')
+        
+        # Start with maximized window for best video preview experience
+        try:
+            self.state('zoomed')  # Windows
+        except:
+            try:
+                self.attributes('-zoomed', True)  # Linux
+            except:
+                pass  # macOS doesn't have this, geometry will handle it
 
         # Enable high DPI scaling
         try:
@@ -356,8 +365,8 @@ class ViewerApp(tk.Tk):
         main_container = ttk.Frame(self, padding="15", style='TFrame')
         main_container.pack(fill=tk.BOTH, expand=True)
 
-        # Configure grid weights for proper layout
-        main_container.grid_rowconfigure(1, weight=1)  # Video area gets most space
+        # Configure grid weights for proper layout - give most space to video
+        main_container.grid_rowconfigure(1, weight=10)  # Video area gets much more space
         main_container.grid_columnconfigure(0, weight=1)
 
         # Header section - modern design
@@ -531,7 +540,7 @@ class ViewerApp(tk.Tk):
 
     def _build_video_display(self, parent: ttk.Frame) -> None:
         """Build the clean video display area"""
-        video_frame = ttk.LabelFrame(parent, text="📺 Live Video Stream", padding=12)
+        video_frame = ttk.LabelFrame(parent, text="📺 Live Video Stream", padding=8)
         video_frame.grid(row=1, column=0, sticky='nsew', pady=(0, 15))
 
         # Video display area with clean design
@@ -539,7 +548,7 @@ class ViewerApp(tk.Tk):
                                    font=('Segoe UI', 13), foreground='#64748b',
                                    bg='#f8fafc', relief='solid', borderwidth=1,
                                    cursor='hand2')
-        self.video_label.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+        self.video_label.pack(fill=tk.BOTH, expand=True, padx=1, pady=1)
 
     def _build_status_bar(self, parent: ttk.Frame) -> None:
         """Build the clean status bar with connection status"""
