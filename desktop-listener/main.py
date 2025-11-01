@@ -8,9 +8,10 @@ import time
 import tkinter as tk
 from dataclasses import dataclass
 from tkinter import ttk
-from typing import Optional
+from typing import Optional, Dict, List
+import json
 
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageFilter, ImageEnhance
 
 try:
     RESAMPLE_LANCZOS = Image.Resampling.LANCZOS
@@ -51,14 +52,24 @@ class FrameStats:
     fps: float = 0.0
     latency_ms: float = 0.0
     last_updated: float = time.time()
+    camera_id: str = "default"
+    
+@dataclass
+class ImageSettings:
+    """Settings for image processing"""
+    brightness: float = 1.0  # 0.0 to 2.0
+    contrast: float = 1.0    # 0.0 to 2.0
+    saturation: float = 1.0  # 0.0 to 2.0
+    filter_type: str = "none"  # none, grayscale, blur, sharpen, edge_enhance
 
 
 class VideoServer:
-    def __init__(self, host: str, port: int, frame_queue: queue.Queue, stats: FrameStats):
+    def __init__(self, host: str, port: int, frame_queue: queue.Queue, stats: FrameStats, camera_id: str = "default"):
         self.host = host
         self.port = port
         self.frame_queue = frame_queue
         self.stats = stats
+        self.camera_id = camera_id
         self._should_run = threading.Event()
         self._server_thread: Optional[threading.Thread] = None
         self._client_socket: Optional[socket.socket] = None
@@ -108,6 +119,24 @@ class VideoServer:
             self._client_output_stream = client_socket
             frame_count = 0
             window_start = time.time()
+
+            # Try to read camera metadata if available
+            try:
+                # Read metadata header (optional)
+                metadata_header = self._recvall(client_socket, 4)
+                if metadata_header:
+                    (metadata_length,) = struct.unpack('>I', metadata_header)
+                    if 0 < metadata_length < 1024:  # Reasonable metadata size
+                        metadata_bytes = self._recvall(client_socket, metadata_length)
+                        if metadata_bytes:
+                            try:
+                                metadata = json.loads(metadata_bytes.decode('utf-8'))
+                                self.camera_id = metadata.get('camera_id', self.camera_id)
+                                self.stats.camera_id = self.camera_id
+                            except (json.JSONDecodeError, UnicodeDecodeError):
+                                pass
+            except:
+                pass
 
             while self._should_run.is_set():
                 try:
@@ -177,8 +206,8 @@ class VideoServer:
 class ViewerApp(tk.Tk):
     def __init__(self, args: argparse.Namespace):
         super().__init__()
-        self.title("🎥 ChessAssist Pro - Video Stream Listener")
-        self.geometry("1400x850")
+        self.title("🎥 Camera Streamer - Multi-Camera Viewer")
+        self.geometry("1600x900")
         self.resizable(True, True)
         self.configure(bg='#f5f7fa')
 
@@ -198,21 +227,49 @@ class ViewerApp(tk.Tk):
         # Set up styles
         self._setup_styles()
 
-        self.frame_queue: queue.Queue = queue.Queue(maxsize=1)
-        self.stats = FrameStats()
-        self.server = VideoServer(args.host, args.port, self.frame_queue, self.stats)
+        # Multi-camera support
+        self.cameras: Dict[str, Dict] = {}  # camera_id -> {server, stats, queue, etc.}
+        self.active_camera_id: Optional[str] = None
+        self.image_settings = ImageSettings()
+        
+        # Setup first camera (default)
+        self._add_camera("Camera 1", args.host, args.port)
+        self.active_camera_id = "Camera 1"
 
         self._photo_image: Optional[ImageTk.PhotoImage] = None
         self._current_image_ts: float = 0.0
-        # Cache for display size to avoid recalculation
         self._cached_display_size: Optional[tuple[int, int]] = None
         self._last_label_size: tuple[int, int] = (0, 0)
 
         self._build_ui(args)
-        self.server.start()
+        
+        # Start all camera servers
+        for camera in self.cameras.values():
+            camera['server'].start()
+            
         self.protocol("WM_DELETE_WINDOW", self._on_close)
         self.after(10, self._poll_frames)
         self.after(500, self._refresh_stats)
+    
+    def _add_camera(self, camera_id: str, host: str, port: int) -> None:
+        """Add a new camera stream"""
+        frame_queue = queue.Queue(maxsize=1)
+        stats = FrameStats(camera_id=camera_id)
+        server = VideoServer(host, port, frame_queue, stats, camera_id)
+        
+        self.cameras[camera_id] = {
+            'server': server,
+            'stats': stats,
+            'queue': frame_queue,
+            'host': host,
+            'port': port
+        }
+    
+    def _switch_camera(self, camera_id: str) -> None:
+        """Switch active camera view"""
+        if camera_id in self.cameras:
+            self.active_camera_id = camera_id
+            self._update_camera_label()
 
     def _setup_styles(self) -> None:
         """Set up clean, modern styles for the application"""
@@ -341,25 +398,65 @@ class ViewerApp(tk.Tk):
 
     def _build_camera_controls(self, parent: ttk.Frame) -> None:
         """Build the clean camera controls panel"""
-        controls_frame = ttk.LabelFrame(parent, text="🎛️ Camera Controls", padding=18)
+        controls_frame = ttk.LabelFrame(parent, text="🎛️ Camera & Image Controls", padding=18)
         controls_frame.grid(row=2, column=0, sticky='ew', pady=(0, 15))
 
         # Create a grid layout for controls
         controls_container = ttk.Frame(controls_frame, style='Card.TFrame')
         controls_container.pack(fill=tk.X)
+        
+        # Camera selection section
+        camera_frame = ttk.Frame(controls_container, style='Card.TFrame')
+        camera_frame.grid(row=0, column=0, columnspan=3, sticky='ew', pady=(0, 15))
+        
+        ttk.Label(camera_frame, text="📷 Active Camera:", style='Control.TLabel').pack(side=tk.LEFT, padx=(5, 10))
+        self.camera_var = tk.StringVar(value="Camera 1")
+        self.camera_dropdown = ttk.Combobox(camera_frame, textvariable=self.camera_var, 
+                                      values=list(self.cameras.keys()), state='readonly', width=15)
+        self.camera_dropdown.pack(side=tk.LEFT, padx=(0, 20))
+        self.camera_dropdown.bind('<<ComboboxSelected>>', lambda e: self._switch_camera(self.camera_var.get()))
+        
+        # Add camera button
+        add_cam_btn = ttk.Button(camera_frame, text="➕ Add Camera", 
+                                command=self._show_add_camera_dialog, style='TButton')
+        add_cam_btn.pack(side=tk.LEFT, padx=(0, 10))
 
-        # Zoom control
-        self._create_control_row(controls_container, "🔍 Zoom", 0, 1.0, 10.0, "1.0x", self._on_zoom_change)
+        # Row offset for remaining controls
+        row_offset = 1
+        
+        # Zoom control (for Android camera)
+        self._create_control_row(controls_container, "🔍 Zoom", row_offset, 1.0, 10.0, "1.0x", self._on_zoom_change)
 
-        # Exposure control
-        self._create_control_row(controls_container, "☀️ Exposure", 1, -12, 12, "0", self._on_exposure_change)
+        # Exposure control (for Android camera)
+        self._create_control_row(controls_container, "☀️ Exposure", row_offset + 1, -12, 12, "0", self._on_exposure_change)
 
-        # Focus control
-        self._create_control_row(controls_container, "🎯 Focus", 2, 0.0, 1.0, "0.50", self._on_focus_change)
+        # Focus control (for Android camera)
+        self._create_control_row(controls_container, "🎯 Focus", row_offset + 2, 0.0, 1.0, "0.50", self._on_focus_change)
+        
+        # Brightness control (for desktop processing)
+        self._create_control_row(controls_container, "💡 Brightness", row_offset + 3, 0.0, 2.0, "1.00", self._on_brightness_change)
+        
+        # Contrast control (for desktop processing)
+        self._create_control_row(controls_container, "◐ Contrast", row_offset + 4, 0.0, 2.0, "1.00", self._on_contrast_change)
+        
+        # Saturation control (for desktop processing)
+        self._create_control_row(controls_container, "🎨 Saturation", row_offset + 5, 0.0, 2.0, "1.00", self._on_saturation_change)
+        
+        # Filter selection
+        filter_frame = ttk.Frame(controls_container, style='Card.TFrame')
+        filter_frame.grid(row=row_offset + 6, column=0, columnspan=3, sticky='ew', pady=(15, 5))
+        
+        ttk.Label(filter_frame, text="🎭 Filter:", style='Control.TLabel').pack(side=tk.LEFT, padx=(5, 10))
+        self.filter_var = tk.StringVar(value="none")
+        filter_dropdown = ttk.Combobox(filter_frame, textvariable=self.filter_var,
+                                       values=["none", "grayscale", "blur", "sharpen", "edge_enhance"],
+                                       state='readonly', width=15)
+        filter_dropdown.pack(side=tk.LEFT)
+        filter_dropdown.bind('<<ComboboxSelected>>', lambda e: self._on_filter_change())
 
         # Reset button with better styling
         button_frame = ttk.Frame(controls_container, style='Card.TFrame')
-        button_frame.grid(row=3, column=0, columnspan=3, pady=(18, 5), sticky='ew')
+        button_frame.grid(row=row_offset + 7, column=0, columnspan=3, pady=(18, 5), sticky='ew')
 
         reset_btn = ttk.Button(button_frame, text="🔄 Reset All Controls",
                               command=self._reset_controls, style='Reset.TButton')
@@ -413,6 +510,15 @@ class ViewerApp(tk.Tk):
         elif label_text == "🎯 Focus":
             var.set(0.5)
             ToolTip(scale, "Manual focus: 0.0 (infinity) to 1.0 (closest)")
+        elif label_text == "💡 Brightness":
+            var.set(1.0)
+            ToolTip(scale, "Image brightness: 0.0 (black) to 2.0 (very bright)")
+        elif label_text == "◐ Contrast":
+            var.set(1.0)
+            ToolTip(scale, "Image contrast: 0.0 (no contrast) to 2.0 (high contrast)")
+        elif label_text == "🎨 Saturation":
+            var.set(1.0)
+            ToolTip(scale, "Color saturation: 0.0 (grayscale) to 2.0 (vivid colors)")
 
         # Configure grid weights
         parent.grid_columnconfigure(1, weight=1)
@@ -467,17 +573,23 @@ class ViewerApp(tk.Tk):
 
     def _poll_frames(self) -> None:
         try:
-            frame_data, timestamp = self.frame_queue.get_nowait()
+            # Get frame from active camera
+            if self.active_camera_id and self.active_camera_id in self.cameras:
+                camera = self.cameras[self.active_camera_id]
+                frame_data, timestamp = camera['queue'].get_nowait()
+                self._display_frame(frame_data, timestamp)
         except queue.Empty:
             pass
-        else:
-            self._display_frame(frame_data, timestamp)
         finally:
             self.after(10, self._poll_frames)
 
     def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
         try:
             image = Image.open(io.BytesIO(frame_data)).convert("RGB")
+            
+            # Apply image processing filters
+            image = self._apply_image_processing(image)
+            
             # Use BILINEAR for faster resizing (good quality, much faster than LANCZOS)
             display_size = self._compute_display_size(image.size)
             if display_size != image.size:
@@ -485,10 +597,15 @@ class ViewerApp(tk.Tk):
             self._photo_image = ImageTk.PhotoImage(image)
             self.video_label.configure(image=self._photo_image, text="")
             now = time.time()
-            self.stats.latency_ms = max((now - timestamp) * 1000.0, 0.0)
+            
+            # Update stats for active camera
+            if self.active_camera_id and self.active_camera_id in self.cameras:
+                stats = self.cameras[self.active_camera_id]['stats']
+                stats.latency_ms = max((now - timestamp) * 1000.0, 0.0)
+            
             self._current_image_ts = now
-            # Status will be updated by _refresh_stats
         except Exception:
+            # Silently ignore frame display errors to avoid disrupting stream
             return
 
     def _compute_display_size(self, image_size: tuple[int, int]) -> tuple[int, int]:
@@ -510,23 +627,63 @@ class ViewerApp(tk.Tk):
         self._cached_display_size = display_size
         self._last_label_size = current_label_size
         return display_size
+    
+    def _apply_image_processing(self, image: Image.Image) -> Image.Image:
+        """Apply image processing settings to the frame"""
+        try:
+            # Apply brightness
+            if self.image_settings.brightness != 1.0:
+                enhancer = ImageEnhance.Brightness(image)
+                image = enhancer.enhance(self.image_settings.brightness)
+            
+            # Apply contrast
+            if self.image_settings.contrast != 1.0:
+                enhancer = ImageEnhance.Contrast(image)
+                image = enhancer.enhance(self.image_settings.contrast)
+            
+            # Apply saturation
+            if self.image_settings.saturation != 1.0:
+                enhancer = ImageEnhance.Color(image)
+                image = enhancer.enhance(self.image_settings.saturation)
+            
+            # Apply filter
+            if self.image_settings.filter_type == "grayscale":
+                image = image.convert('L').convert('RGB')
+            elif self.image_settings.filter_type == "blur":
+                image = image.filter(ImageFilter.BLUR)
+            elif self.image_settings.filter_type == "sharpen":
+                image = image.filter(ImageFilter.SHARPEN)
+            elif self.image_settings.filter_type == "edge_enhance":
+                image = image.filter(ImageFilter.EDGE_ENHANCE)
+            
+            return image
+        except Exception:
+            # Return original image if processing fails
+            return image
 
     def _refresh_stats(self) -> None:
         """Update the FPS and latency display"""
-        elapsed = time.time() - self.stats.last_updated
-        if elapsed < 2.0 and self.stats.fps > 0:
-            self.fps_var.set(f"FPS: {self.stats.fps:.1f}")
-            self.latency_var.set(f"Latency: {self.stats.latency_ms:.0f}ms")
-            self.status_var.set("🎬 Streaming active")
+        if self.active_camera_id and self.active_camera_id in self.cameras:
+            stats = self.cameras[self.active_camera_id]['stats']
+            elapsed = time.time() - stats.last_updated
+            if elapsed < 2.0 and stats.fps > 0:
+                self.fps_var.set(f"FPS: {stats.fps:.1f}")
+                self.latency_var.set(f"Latency: {stats.latency_ms:.0f}ms")
+                self.status_var.set(f"🎬 Streaming: {stats.camera_id}")
+            else:
+                self.fps_var.set("FPS: --")
+                self.latency_var.set("Latency: --ms")
+                self.status_var.set("⏳ Waiting for stream...")
         else:
             self.fps_var.set("FPS: --")
             self.latency_var.set("Latency: --ms")
-            self.status_var.set("⏳ Waiting for stream...")
+            self.status_var.set("⏳ No camera selected...")
         self.after(500, self._refresh_stats)
 
     def _stop_server(self) -> None:
-        self.server.stop()
-        self.status_var.set("Server stopped")
+        for camera in self.cameras.values():
+            camera['server'].stop()
+        self.status_var.set("All servers stopped")
 
     def _on_close(self) -> None:
         self._stop_server()
@@ -535,28 +692,138 @@ class ViewerApp(tk.Tk):
     def _on_zoom_change(self, value: str) -> None:
         zoom_value = float(value)
         self.zoom_label.config(text=f"{zoom_value:.1f}x")
-        self.server.send_control_command(f"ZOOM:{zoom_value:.2f}")
+        if self.active_camera_id and self.active_camera_id in self.cameras:
+            self.cameras[self.active_camera_id]['server'].send_control_command(f"ZOOM:{zoom_value:.2f}")
     
     def _on_exposure_change(self, value: str) -> None:
         exposure_value = int(float(value))
         self.exposure_label.config(text=str(exposure_value))
-        self.server.send_control_command(f"EXPOSURE:{exposure_value}")
+        if self.active_camera_id and self.active_camera_id in self.cameras:
+            self.cameras[self.active_camera_id]['server'].send_control_command(f"EXPOSURE:{exposure_value}")
     
     def _on_focus_change(self, value: str) -> None:
         focus_value = float(value)
         self.focus_label.config(text=f"{focus_value:.2f}")
-        self.server.send_control_command(f"FOCUS:{focus_value:.2f}")
+        if self.active_camera_id and self.active_camera_id in self.cameras:
+            self.cameras[self.active_camera_id]['server'].send_control_command(f"FOCUS:{focus_value:.2f}")
+    
+    def _on_brightness_change(self, value: str) -> None:
+        brightness_value = float(value)
+        self.brightness_label.config(text=f"{brightness_value:.2f}")
+        self.image_settings.brightness = brightness_value
+    
+    def _on_contrast_change(self, value: str) -> None:
+        contrast_value = float(value)
+        self.contrast_label.config(text=f"{contrast_value:.2f}")
+        self.image_settings.contrast = contrast_value
+    
+    def _on_saturation_change(self, value: str) -> None:
+        saturation_value = float(value)
+        self.saturation_label.config(text=f"{saturation_value:.2f}")
+        self.image_settings.saturation = saturation_value
+    
+    def _on_filter_change(self) -> None:
+        self.image_settings.filter_type = self.filter_var.get()
+    
+    def _show_add_camera_dialog(self) -> None:
+        """Show dialog to add a new camera"""
+        dialog = tk.Toplevel(self)
+        dialog.title("Add New Camera")
+        dialog.geometry("400x250")
+        dialog.resizable(False, False)
+        dialog.configure(bg='#f5f7fa')
+        
+        # Center the dialog
+        dialog.transient(self)
+        dialog.grab_set()
+        
+        frame = ttk.Frame(dialog, padding=20, style='Card.TFrame')
+        frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Camera name
+        ttk.Label(frame, text="Camera Name:", style='TLabel').grid(row=0, column=0, sticky='w', pady=10)
+        name_entry = ttk.Entry(frame, width=25)
+        name_entry.grid(row=0, column=1, pady=10, padx=10)
+        name_entry.insert(0, f"Camera {len(self.cameras) + 1}")
+        
+        # Host/IP
+        ttk.Label(frame, text="Host/IP:", style='TLabel').grid(row=1, column=0, sticky='w', pady=10)
+        host_entry = ttk.Entry(frame, width=25)
+        host_entry.grid(row=1, column=1, pady=10, padx=10)
+        host_entry.insert(0, "0.0.0.0")
+        
+        # Port
+        ttk.Label(frame, text="Port:", style='TLabel').grid(row=2, column=0, sticky='w', pady=10)
+        port_entry = ttk.Entry(frame, width=25)
+        port_entry.grid(row=2, column=1, pady=10, padx=10)
+        port_entry.insert(0, str(5000 + len(self.cameras)))
+        
+        error_label = ttk.Label(frame, text="", foreground='red', background='#ffffff', style='TLabel')
+        error_label.grid(row=4, column=0, columnspan=2, pady=(0, 10))
+        
+        def add_camera():
+            name = name_entry.get().strip()
+            host = host_entry.get().strip()
+            try:
+                port = int(port_entry.get().strip())
+                if not name:
+                    error_label.config(text="Please enter a camera name")
+                    return
+                if not host:
+                    error_label.config(text="Please enter a host/IP address")
+                    return
+                if port < 1024 or port > 65535:
+                    error_label.config(text="Port must be between 1024 and 65535")
+                    return
+                if name in self.cameras:
+                    error_label.config(text=f"Camera '{name}' already exists")
+                    return
+                    
+                self._add_camera(name, host, port)
+                self.cameras[name]['server'].start()
+                # Update camera dropdown
+                self.camera_dropdown['values'] = list(self.cameras.keys())
+                dialog.destroy()
+            except ValueError:
+                error_label.config(text="Invalid port number")
+        
+        # Buttons
+        button_frame = ttk.Frame(frame, style='Card.TFrame')
+        button_frame.grid(row=5, column=0, columnspan=2, pady=20)
+        
+        ttk.Button(button_frame, text="Add", command=add_camera, style='TButton').pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Cancel", command=dialog.destroy, style='TButton').pack(side=tk.LEFT, padx=5)
+    
+    def _update_camera_label(self) -> None:
+        """Update UI to reflect active camera"""
+        pass  # Can be extended to show camera info
     
     def _reset_controls(self) -> None:
         self.zoom_var.set(1.0)
         self.exposure_var.set(0)
         self.focus_var.set(0.5)
+        self.brightness_var.set(1.0)
+        self.contrast_var.set(1.0)
+        self.saturation_var.set(1.0)
+        self.filter_var.set("none")
+        
         self.zoom_label.config(text="1.0x")
         self.exposure_label.config(text="0")
         self.focus_label.config(text="0.50")
-        self.server.send_control_command("ZOOM:1.0")
-        self.server.send_control_command("EXPOSURE:0")
-        self.server.send_control_command("FOCUS:0.5")
+        self.brightness_label.config(text="1.00")
+        self.contrast_label.config(text="1.00")
+        self.saturation_label.config(text="1.00")
+        
+        self.image_settings.brightness = 1.0
+        self.image_settings.contrast = 1.0
+        self.image_settings.saturation = 1.0
+        self.image_settings.filter_type = "none"
+        
+        if self.active_camera_id and self.active_camera_id in self.cameras:
+            server = self.cameras[self.active_camera_id]['server']
+            server.send_control_command("ZOOM:1.0")
+            server.send_control_command("EXPOSURE:0")
+            server.send_control_command("FOCUS:0.5")
 
 
 def get_local_ip_addresses() -> list[str]:

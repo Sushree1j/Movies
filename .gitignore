@@ -198,3 +198,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Backup files
+*_backup.py
