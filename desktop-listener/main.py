@@ -115,6 +115,8 @@ class VideoServer:
     def _handle_client(self, client_socket: socket.socket, address) -> None:
         with client_socket:
             client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 512 * 1024)  # 512KB receive buffer
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 64 * 1024)  # 64KB send buffer
             client_socket.settimeout(5.0)
             self._client_output_stream = client_socket
             frame_count = 0
@@ -167,15 +169,19 @@ class VideoServer:
             self._client_output_stream = None
 
     def _push_frame(self, frame_data: bytes, timestamp: float) -> None:
-        # Only drop old frame if queue is full
+        # Drop old frames immediately for minimal latency - only keep latest frame
+        # Clear queue completely to ensure we always show the latest frame
+        while not self.frame_queue.empty():
+            try:
+                self.frame_queue.get_nowait()
+            except queue.Empty:
+                break
+        # Add the new frame
         try:
             self.frame_queue.put_nowait((frame_data, timestamp))
         except queue.Full:
-            try:
-                self.frame_queue.get_nowait()
-                self.frame_queue.put_nowait((frame_data, timestamp))
-            except (queue.Empty, queue.Full):
-                pass
+            # Should not happen since we just cleared the queue, but handle gracefully
+            pass
         self.stats.last_updated = timestamp
 
     def _recvall(self, client_socket: socket.socket, length: int) -> Optional[bytes]:
@@ -207,9 +213,18 @@ class ViewerApp(tk.Tk):
     def __init__(self, args: argparse.Namespace):
         super().__init__()
         self.title("🎥 Camera Streamer - Multi-Camera Viewer")
-        self.geometry("1600x900")
+        self.geometry("1920x1080")  # Larger window for bigger video preview
         self.resizable(True, True)
         self.configure(bg='#f5f7fa')
+        
+        # Start with maximized window for best video preview experience
+        try:
+            self.state('zoomed')  # Windows
+        except:
+            try:
+                self.attributes('-zoomed', True)  # Linux
+            except:
+                pass  # macOS doesn't have this, geometry will handle it
 
         # Enable high DPI scaling
         try:
@@ -248,7 +263,7 @@ class ViewerApp(tk.Tk):
             camera['server'].start()
             
         self.protocol("WM_DELETE_WINDOW", self._on_close)
-        self.after(10, self._poll_frames)
+        self.after(8, self._poll_frames)  # ~8ms for 120Hz polling (2x 60fps for smooth handling)
         self.after(500, self._refresh_stats)
     
     def _add_camera(self, camera_id: str, host: str, port: int) -> None:
@@ -350,8 +365,8 @@ class ViewerApp(tk.Tk):
         main_container = ttk.Frame(self, padding="15", style='TFrame')
         main_container.pack(fill=tk.BOTH, expand=True)
 
-        # Configure grid weights for proper layout
-        main_container.grid_rowconfigure(1, weight=1)  # Video area gets most space
+        # Configure grid weights for proper layout - give most space to video
+        main_container.grid_rowconfigure(1, weight=10)  # Video area gets much more space
         main_container.grid_columnconfigure(0, weight=1)
 
         # Header section - modern design
@@ -525,7 +540,7 @@ class ViewerApp(tk.Tk):
 
     def _build_video_display(self, parent: ttk.Frame) -> None:
         """Build the clean video display area"""
-        video_frame = ttk.LabelFrame(parent, text="📺 Live Video Stream", padding=12)
+        video_frame = ttk.LabelFrame(parent, text="📺 Live Video Stream", padding=8)
         video_frame.grid(row=1, column=0, sticky='nsew', pady=(0, 15))
 
         # Video display area with clean design
@@ -533,7 +548,7 @@ class ViewerApp(tk.Tk):
                                    font=('Segoe UI', 13), foreground='#64748b',
                                    bg='#f8fafc', relief='solid', borderwidth=1,
                                    cursor='hand2')
-        self.video_label.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
+        self.video_label.pack(fill=tk.BOTH, expand=True, padx=1, pady=1)
 
     def _build_status_bar(self, parent: ttk.Frame) -> None:
         """Build the clean status bar with connection status"""
@@ -581,7 +596,7 @@ class ViewerApp(tk.Tk):
         except queue.Empty:
             pass
         finally:
-            self.after(10, self._poll_frames)
+            self.after(8, self._poll_frames)  # ~8ms for 120Hz polling
 
     def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
         try:
