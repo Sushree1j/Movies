@@ -110,6 +110,8 @@ class MainActivity : AppCompatActivity() {
     private val fpsFormat = DecimalFormat("0.0")
     private var frameCounter = 0
     private var lastFpsTimestamp = 0L
+    private var lastFrameTimestamp = 0L
+    private val minFrameIntervalMs = 33L // ~30 FPS max to prevent overwhelming network
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -269,6 +271,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 val socket = Socket()
                 socket.tcpNoDelay = true
+                socket.receiveBufferSize = 64 * 1024  // 64KB receive buffer
+                socket.sendBufferSize = 512 * 1024    // 512KB send buffer for better throughput
                 socket.connect(InetSocketAddress(ipAddress, port), 3000)
                 currentSocket = socket
                 outputStream = DataOutputStream(socket.getOutputStream())
@@ -307,11 +311,22 @@ class MainActivity : AppCompatActivity() {
 
             imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, ImageFormat.YUV_420_888, 2)
             imageReader?.setOnImageAvailableListener({ reader ->
+                // Throttle frame processing to prevent overwhelming the network
+                val now = System.currentTimeMillis()
+                if (now - lastFrameTimestamp < minFrameIntervalMs) {
+                    reader.acquireLatestImage()?.close() // Drop frame but clean up
+                    return@setOnImageAvailableListener
+                }
+                lastFrameTimestamp = now
+                
                 val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
-                val jpegBytes = image.toJpegBytes(80)
-                image.close()
-                if (jpegBytes != null && isStreaming.get()) {
-                    sendFrame(jpegBytes)
+                try {
+                    val jpegBytes = image.toJpegBytes(80)
+                    if (jpegBytes != null && isStreaming.get()) {
+                        sendFrame(jpegBytes)
+                    }
+                } finally {
+                    image.close() // Ensure image is always closed
                 }
             }, cameraHandler)
 
@@ -403,11 +418,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateFps() {
+        frameCounter++
+        // Only update FPS display every 30 frames or 1 second to reduce UI overhead
+        if (frameCounter < 30) return
+        
         val now = System.currentTimeMillis()
         if (lastFpsTimestamp == 0L) {
             lastFpsTimestamp = now
+            frameCounter = 0
+            return
         }
-        frameCounter++
+        
         val elapsed = now - lastFpsTimestamp
         if (elapsed >= 1000) {
             val fps = frameCounter * 1000f / elapsed
@@ -666,20 +687,24 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun handleControlCommand(command: String) {
-        val parts = command.split(":")
-        if (parts.size < 2) return
+        // Optimize parsing - use indexOf instead of split to avoid array allocation
+        val colonIndex = command.indexOf(':')
+        if (colonIndex <= 0 || colonIndex >= command.length - 1) return
         
-        when (parts[0]) {
+        val commandType = command.substring(0, colonIndex)
+        val valueStr = command.substring(colonIndex + 1)
+        
+        when (commandType) {
             "ZOOM" -> {
-                currentZoom = parts[1].toFloatOrNull()?.coerceIn(1.0f, 10.0f) ?: currentZoom
+                currentZoom = valueStr.toFloatOrNull()?.coerceIn(1.0f, 10.0f) ?: currentZoom
                 updateCameraSettings()
             }
             "EXPOSURE" -> {
-                currentExposure = parts[1].toIntOrNull()?.coerceIn(-12, 12) ?: currentExposure
+                currentExposure = valueStr.toIntOrNull()?.coerceIn(-12, 12) ?: currentExposure
                 updateCameraSettings()
             }
             "FOCUS" -> {
-                currentFocus = parts[1].toFloatOrNull()?.coerceIn(0.0f, 1.0f) ?: currentFocus
+                currentFocus = valueStr.toFloatOrNull()?.coerceIn(0.0f, 1.0f) ?: currentFocus
                 updateCameraSettings()
             }
         }

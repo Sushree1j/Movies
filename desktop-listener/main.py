@@ -123,6 +123,8 @@ class VideoServer:
     def _handle_client(self, client_socket: socket.socket, address) -> None:
         with client_socket:
             client_socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            # Increase receive buffer for better throughput
+            client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 512 * 1024)
             client_socket.settimeout(5.0)
             self._client_output_stream = client_socket
             frame_count = 0
@@ -224,6 +226,7 @@ class ViewerApp(tk.Tk):
         self._current_image_ts: float = 0.0
         self._cached_display_size: Optional[tuple[int, int]] = None
         self._last_label_size: tuple[int, int] = (0, 0)
+        self._frame_count: int = 0  # Count frames to throttle UI updates
 
         self._build_ui(args)
         self.server.start()
@@ -482,17 +485,18 @@ class ViewerApp(tk.Tk):
                                      command=self._stop_server, style='TButton', width=10)
         self.stop_button.pack(side=tk.RIGHT)
 
-    def _refresh_stats(self) -> None:
+    def _poll_frames(self) -> None:
+        """Poll for new frames from the queue"""
         try:
             frame_data, timestamp = self.frame_queue.get_nowait()
+            self._display_frame(frame_data, timestamp)
         except queue.Empty:
             pass
-        else:
-            self._display_frame(frame_data, timestamp)
-        finally:
-            self.after(10, self._poll_frames)
+        
+        # Poll at 60 FPS max (every ~16ms) to reduce CPU usage
+        self.after(16, self._poll_frames)
 
-    def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
+    def _refresh_stats(self) -> None:
         try:
             image = Image.open(io.BytesIO(frame_data)).convert("RGB")
             display_size = self._compute_display_size(image.size)
