@@ -77,6 +77,7 @@ animator mtrl_fab_hide_motion_spec
 animator mtrl_fab_show_motion_spec
 animator mtrl_fab_transformation_sheet_collapse_spec
 animator mtrl_fab_transformation_sheet_expand_spec
+array quality_labels
 array resolution_labels
 attr SharedValue
 attr SharedValueId
@@ -3217,6 +3218,8 @@ id bounceStart
 id buttonPanel
 id cache_measures
 id callMeasure
+id cameraNameEditText
+id cameraNameInputLayout
 id cameraSettingsCard
 id cameraToggleGroup
 id cancel_button
@@ -3487,6 +3490,8 @@ id previewCard
 id previewTextureView
 id progress_circular
 id progress_horizontal
+id qualityInputLayout
+id qualitySpinner
 id radio
 id ratio
 id rearCameraButton
@@ -3862,6 +3867,7 @@ string abc_searchview_description_voice
 string abc_shareactionprovider_share_with
 string abc_shareactionprovider_share_with_application
 string abc_toolbar_collapse_description
+string add_camera
 string androidx_startup
 string app_name
 string appbar_scrolling_view_behavior
@@ -3878,10 +3884,13 @@ string call_notification_hang_up_action
 string call_notification_incoming_text
 string call_notification_ongoing_text
 string call_notification_screening_text
+string camera_name
+string camera_settings
 string character_counter_content_description
 string character_counter_overflowed_content_description
 string character_counter_pattern
 string clear_text_end_icon_content_description
+string connection_settings
 string error_a11y_label
 string error_icon_content_description
 string exposed_dropdown_menu_content_description
@@ -4009,6 +4018,7 @@ string side_sheet_behavior
 string start
 string status_bar_notification_info_overflow
 string stop
+string stream_quality
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style Animation_AppCompat_Dialog
