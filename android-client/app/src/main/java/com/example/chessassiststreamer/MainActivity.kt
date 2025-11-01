@@ -419,7 +419,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateFps() {
         frameCounter++
-        // Only update FPS display every 30 frames or 1 second to reduce UI overhead
+        // Only update FPS display after at least 30 frames to reduce UI overhead
+        // Actual update happens every 1 second or more
         if (frameCounter < 30) return
         
         val now = System.currentTimeMillis()
@@ -579,7 +580,8 @@ class MainActivity : AppCompatActivity() {
                 var uvIndex = ySize
                 var uIndex = 0
                 var vIndex = 0
-                while (uIndex < uSize && vIndex < vSize && uvIndex + 1 < nv21.size) {
+                // Ensure we have space for both V and U bytes
+                while (uIndex < uSize && vIndex < vSize && uvIndex < nv21.size - 1) {
                     nv21[uvIndex++] = vBuffer.get(vIndex++)
                     nv21[uvIndex++] = uBuffer.get(uIndex++)
                 }

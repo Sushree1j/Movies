@@ -496,7 +496,8 @@ class ViewerApp(tk.Tk):
         # Poll at 60 FPS max (every ~16ms) to reduce CPU usage
         self.after(16, self._poll_frames)
 
-    def _refresh_stats(self) -> None:
+    def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
+        """Display a frame in the video label"""
         try:
             image = Image.open(io.BytesIO(frame_data)).convert("RGB")
             display_size = self._compute_display_size(image.size)
@@ -511,6 +512,7 @@ class ViewerApp(tk.Tk):
             return
 
     def _compute_display_size(self, image_size: tuple[int, int]) -> tuple[int, int]:
+        """Compute optimal display size for image, with caching"""
         label_width = max(self.video_label.winfo_width(), 320)
         label_height = max(self.video_label.winfo_height(), 240)
         current_label_size = (label_width, label_height)
