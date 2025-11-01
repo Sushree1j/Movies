@@ -88,6 +88,10 @@ class MainActivity : AppCompatActivity() {
     private val fpsFormat = DecimalFormat("0.0")
     private var frameCounter = 0
     private var lastFpsTimestamp = 0L
+    
+    // Reusable buffers for YUV conversion to reduce allocations
+    private var nv21Buffer: ByteArray? = null
+    private var jpegOutputStream: ByteArrayOutputStream = ByteArrayOutputStream(256 * 1024) // Pre-allocate 256KB
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -285,11 +289,17 @@ class MainActivity : AppCompatActivity() {
 
             imageReader = ImageReader.newInstance(previewSize.width, previewSize.height, ImageFormat.YUV_420_888, 2)
             imageReader?.setOnImageAvailableListener({ reader ->
+                // Use acquireLatestImage to skip old frames for better real-time performance
                 val image = reader.acquireLatestImage() ?: return@setOnImageAvailableListener
-                val jpegBytes = image.toJpegBytes(80)
-                image.close()
-                if (jpegBytes != null && isStreaming.get()) {
-                    sendFrame(jpegBytes)
+                try {
+                    if (isStreaming.get()) {
+                        val jpegBytes = image.toJpegBytes(80)
+                        if (jpegBytes != null) {
+                            sendFrame(jpegBytes)
+                        }
+                    }
+                } finally {
+                    image.close()
                 }
             }, cameraHandler)
 
@@ -517,20 +527,23 @@ class MainActivity : AppCompatActivity() {
         val uSize = uBuffer.remaining()
         val vSize = vBuffer.remaining()
 
-        val nv21 = ByteArray(ySize + uSize + vSize)
+        // Reuse buffer if possible to reduce allocations
+        val totalSize = ySize + uSize + vSize
+        if (nv21Buffer == null || nv21Buffer!!.size < totalSize) {
+            nv21Buffer = ByteArray(totalSize)
+        }
+        val nv21 = nv21Buffer!!
+        
         yBuffer.get(nv21, 0, ySize)
         val uvStride = planes[1].pixelStride
         if (uvStride == 2) {
-            val uBytes = ByteArray(uSize)
-            val vBytes = ByteArray(vSize)
-            uBuffer.get(uBytes)
-            vBuffer.get(vBytes)
+            // Interleaved UV: read directly into nv21 buffer
             var uvIndex = ySize
-            var uIndex = 0
-            var vIndex = 0
-            while (uIndex < uBytes.size && vIndex < vBytes.size && uvIndex < nv21.size) {
-                nv21[uvIndex++] = vBytes[vIndex++]
-                nv21[uvIndex++] = uBytes[uIndex++]
+            vBuffer.position(0)
+            uBuffer.position(0)
+            while (uvIndex < totalSize - 1 && vBuffer.hasRemaining() && uBuffer.hasRemaining()) {
+                nv21[uvIndex++] = vBuffer.get()
+                nv21[uvIndex++] = uBuffer.get()
             }
         } else {
             var position = ySize
@@ -540,15 +553,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
-        val outputStream = ByteArrayOutputStream()
+        // Reuse ByteArrayOutputStream to reduce allocations
+        jpegOutputStream.reset()
         return try {
-            yuvImage.compressToJpeg(Rect(0, 0, width, height), quality, outputStream)
-            outputStream.toByteArray()
+            yuvImage.compressToJpeg(Rect(0, 0, width, height), quality, jpegOutputStream)
+            jpegOutputStream.toByteArray()
         } catch (e: Exception) {
             Log.e(TAG, "Compression error", e)
             null
-        } finally {
-            outputStream.close()
         }
     }
 
@@ -675,8 +687,10 @@ class MainActivity : AppCompatActivity() {
                 val session = captureSession ?: return@post
                 val builder = captureRequestBuilder ?: return@post
                 
+                // Apply controls and update in a single operation
                 applyCameraControls(builder)
-                session.setRepeatingRequest(builder.build(), null, cameraHandler)
+                val request = builder.build()
+                session.setRepeatingRequest(request, null, cameraHandler)
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update camera settings", e)
             }
