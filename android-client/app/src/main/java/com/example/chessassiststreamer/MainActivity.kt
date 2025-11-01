@@ -396,18 +396,16 @@ class MainActivity : AppCompatActivity() {
     private fun sendFrame(jpegBytes: ByteArray) {
         if (!isStreaming.get()) return
         
-        // Use a coroutine with limited concurrency instead of mutex to reduce lock contention
+        // Use coroutine with mutex to ensure thread-safe writes
         streamingScope.launch {
             try {
                 val output = outputStream ?: return@launch
-                // Write size and data in one operation to reduce lock time
+                // Keep write and flush atomic to prevent data corruption
                 sendMutex.withLock {
                     output.writeInt(jpegBytes.size)
                     output.write(jpegBytes)
-                    // Flush less frequently - only after write completes
+                    output.flush()
                 }
-                // Flush outside lock to reduce contention
-                output.flush()
                 updateFps()
             } catch (e: Exception) {
                 Log.e(TAG, "Sending frame failed", e)
@@ -580,7 +578,8 @@ class MainActivity : AppCompatActivity() {
             if (uvStride == 2) {
                 // Interleaved UV planes - read directly from buffers
                 var uvIndex = ySize
-                // Ensure we have space for both V and U bytes (2 bytes per iteration)
+                // Check uvIndex + 1 < size ensures both uvIndex and uvIndex+1 are valid indices
+                // (since last valid index is nv21.size - 1)
                 while (uBuffer.hasRemaining() && vBuffer.hasRemaining() && uvIndex + 1 < nv21.size) {
                     nv21[uvIndex++] = vBuffer.get()
                     nv21[uvIndex++] = uBuffer.get()

@@ -24,17 +24,10 @@ class ToolTip:
         self.widget = widget
         self.text = text
         self.tooltip_window = None
-        self._show_id = None
-        self._hide_id = None
         self.widget.bind("<Enter>", self.show_tooltip)
         self.widget.bind("<Leave>", self.hide_tooltip)
 
     def show_tooltip(self, event=None):
-        # Cancel any pending hide operation
-        if self._hide_id is not None:
-            self.widget.after_cancel(self._hide_id)
-            self._hide_id = None
-        
         # Don't create multiple tooltip windows
         if self.tooltip_window is not None:
             return
@@ -52,11 +45,6 @@ class ToolTip:
         label.pack()
 
     def hide_tooltip(self, event=None):
-        # Cancel any pending show operation
-        if self._show_id is not None:
-            self.widget.after_cancel(self._show_id)
-            self._show_id = None
-            
         if self.tooltip_window:
             try:
                 self.tooltip_window.destroy()
