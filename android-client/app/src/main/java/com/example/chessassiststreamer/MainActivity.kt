@@ -314,7 +314,8 @@ class MainActivity : AppCompatActivity() {
                 // Throttle frame processing to prevent overwhelming the network
                 val now = System.currentTimeMillis()
                 if (now - lastFrameTimestamp < minFrameIntervalMs) {
-                    reader.acquireLatestImage()?.close() // Drop frame but clean up
+                    // Drop frame - acquireLatestImage() will clear queue and drop all but latest
+                    reader.acquireLatestImage()?.close()
                     return@setOnImageAvailableListener
                 }
                 lastFrameTimestamp = now
@@ -576,14 +577,12 @@ class MainActivity : AppCompatActivity() {
             
             val uvStride = planes[1].pixelStride
             if (uvStride == 2) {
-                // Interleaved UV planes - more efficient processing
+                // Interleaved UV planes - read directly from buffers
                 var uvIndex = ySize
-                var uIndex = 0
-                var vIndex = 0
                 // Ensure we have space for both V and U bytes
-                while (uIndex < uSize && vIndex < vSize && uvIndex < nv21.size - 1) {
-                    nv21[uvIndex++] = vBuffer.get(vIndex++)
-                    nv21[uvIndex++] = uBuffer.get(uIndex++)
+                while (uBuffer.hasRemaining() && vBuffer.hasRemaining() && uvIndex < nv21.size - 1) {
+                    nv21[uvIndex++] = vBuffer.get()
+                    nv21[uvIndex++] = uBuffer.get()
                 }
             } else {
                 // Semi-planar format

@@ -493,8 +493,8 @@ class ViewerApp(tk.Tk):
         except queue.Empty:
             pass
         
-        # Poll at 60 FPS max (every ~16ms) to reduce CPU usage
-        self.after(16, self._poll_frames)
+        # Poll at ~60 FPS (every 17ms) to reduce CPU usage
+        self.after(17, self._poll_frames)
 
     def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
         """Display a frame in the video label"""
