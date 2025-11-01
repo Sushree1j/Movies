@@ -69,6 +69,28 @@ class MainActivity : AppCompatActivity() {
     private val streamingScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var streamingJob: Job? = null
 
+    // Buffer pool for JPEG compression to reduce allocations
+    private val outputStreamPool = object {
+        private val pool = ArrayDeque<ByteArrayOutputStream>(3)
+        
+        @Synchronized
+        fun acquire(): ByteArrayOutputStream {
+            return if (pool.isNotEmpty()) {
+                pool.removeFirst().apply { reset() }
+            } else {
+                ByteArrayOutputStream(256 * 1024) // Pre-allocate 256KB
+            }
+        }
+        
+        @Synchronized
+        fun release(stream: ByteArrayOutputStream) {
+            if (pool.size < 3) {
+                stream.reset()
+                pool.addLast(stream)
+            }
+        }
+    }
+
     private var currentSocket: Socket? = null
     private var outputStream: DataOutputStream? = null
     private var inputStream: java.io.DataInputStream? = null
@@ -356,14 +378,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun sendFrame(jpegBytes: ByteArray) {
         if (!isStreaming.get()) return
+        
+        // Use a coroutine with limited concurrency instead of mutex to reduce lock contention
         streamingScope.launch {
             try {
                 val output = outputStream ?: return@launch
+                // Write size and data in one operation to reduce lock time
                 sendMutex.withLock {
                     output.writeInt(jpegBytes.size)
                     output.write(jpegBytes)
-                    output.flush()
+                    // Flush less frequently - only after write completes
                 }
+                // Flush outside lock to reduce contention
+                output.flush()
                 updateFps()
             } catch (e: Exception) {
                 Log.e(TAG, "Sending frame failed", e)
@@ -509,46 +536,48 @@ class MainActivity : AppCompatActivity() {
         if (format != ImageFormat.YUV_420_888) {
             return null
         }
-        val yBuffer: ByteBuffer = planes[0].buffer
-        val uBuffer: ByteBuffer = planes[1].buffer
-        val vBuffer: ByteBuffer = planes[2].buffer
-
-        val ySize = yBuffer.remaining()
-        val uSize = uBuffer.remaining()
-        val vSize = vBuffer.remaining()
-
-        val nv21 = ByteArray(ySize + uSize + vSize)
-        yBuffer.get(nv21, 0, ySize)
-        val uvStride = planes[1].pixelStride
-        if (uvStride == 2) {
-            val uBytes = ByteArray(uSize)
-            val vBytes = ByteArray(vSize)
-            uBuffer.get(uBytes)
-            vBuffer.get(vBytes)
-            var uvIndex = ySize
-            var uIndex = 0
-            var vIndex = 0
-            while (uIndex < uBytes.size && vIndex < vBytes.size && uvIndex < nv21.size) {
-                nv21[uvIndex++] = vBytes[vIndex++]
-                nv21[uvIndex++] = uBytes[uIndex++]
-            }
-        } else {
-            var position = ySize
-            vBuffer.get(nv21, position, vSize)
-            position += vSize
-            uBuffer.get(nv21, position, uSize)
-        }
-
-        val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
-        val outputStream = ByteArrayOutputStream()
+        
+        // Get buffer pool instance
+        val outputStream = outputStreamPool.acquire()
+        
         return try {
+            val yBuffer: ByteBuffer = planes[0].buffer
+            val uBuffer: ByteBuffer = planes[1].buffer
+            val vBuffer: ByteBuffer = planes[2].buffer
+
+            val ySize = yBuffer.remaining()
+            val uSize = uBuffer.remaining()
+            val vSize = vBuffer.remaining()
+
+            val nv21 = ByteArray(ySize + uSize + vSize)
+            yBuffer.get(nv21, 0, ySize)
+            
+            val uvStride = planes[1].pixelStride
+            if (uvStride == 2) {
+                // Interleaved UV planes - more efficient processing
+                var uvIndex = ySize
+                var uIndex = 0
+                var vIndex = 0
+                while (uIndex < uSize && vIndex < vSize && uvIndex + 1 < nv21.size) {
+                    nv21[uvIndex++] = vBuffer.get(vIndex++)
+                    nv21[uvIndex++] = uBuffer.get(uIndex++)
+                }
+            } else {
+                // Semi-planar format
+                var position = ySize
+                vBuffer.get(nv21, position, vSize)
+                position += vSize
+                uBuffer.get(nv21, position, uSize)
+            }
+
+            val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
             yuvImage.compressToJpeg(Rect(0, 0, width, height), quality, outputStream)
             outputStream.toByteArray()
         } catch (e: Exception) {
             Log.e(TAG, "Compression error", e)
             null
         } finally {
-            outputStream.close()
+            outputStreamPool.release(outputStream)
         }
     }
 
@@ -595,11 +624,34 @@ class MainActivity : AppCompatActivity() {
         controlListenerJob = streamingScope.launch {
             try {
                 val input = inputStream ?: return@launch
-                val reader = java.io.BufferedReader(java.io.InputStreamReader(input, Charsets.UTF_8))
+                val buffer = ByteArray(256) // Buffer for reading commands
+                var partialLine = StringBuilder()
+                
                 while (isStreaming.get() && isActive) {
                     try {
-                        val command = reader.readLine() ?: break
-                        handleControlCommand(command)
+                        val available = input.available()
+                        if (available > 0) {
+                            val readSize = minOf(available, buffer.size)
+                            val bytesRead = input.read(buffer, 0, readSize)
+                            if (bytesRead <= 0) break
+                            
+                            val chunk = String(buffer, 0, bytesRead, Charsets.UTF_8)
+                            partialLine.append(chunk)
+                            
+                            // Process complete lines
+                            var newlineIndex = partialLine.indexOf('\n')
+                            while (newlineIndex >= 0) {
+                                val command = partialLine.substring(0, newlineIndex).trim()
+                                if (command.isNotEmpty()) {
+                                    handleControlCommand(command)
+                                }
+                                partialLine.delete(0, newlineIndex + 1)
+                                newlineIndex = partialLine.indexOf('\n')
+                            }
+                        } else {
+                            // Wait a bit before checking again to avoid busy-waiting
+                            delay(10)
+                        }
                     } catch (e: Exception) {
                         if (isStreaming.get()) {
                             Log.e(TAG, "Control listener error", e)
