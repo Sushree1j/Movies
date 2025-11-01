@@ -138,26 +138,29 @@ class VideoServer:
             self._client_output_stream = None
 
     def _push_frame(self, frame_data: bytes, timestamp: float) -> None:
-        try:
-            self.frame_queue.get_nowait()
-        except queue.Empty:
-            pass
+        # Only drop old frame if queue is full
         try:
             self.frame_queue.put_nowait((frame_data, timestamp))
         except queue.Full:
-            pass
+            try:
+                self.frame_queue.get_nowait()
+                self.frame_queue.put_nowait((frame_data, timestamp))
+            except (queue.Empty, queue.Full):
+                pass
         self.stats.last_updated = timestamp
 
     def _recvall(self, client_socket: socket.socket, length: int) -> Optional[bytes]:
-        data = bytearray()
-        while len(data) < length:
+        data = bytearray(length)
+        view = memoryview(data)
+        received = 0
+        while received < length:
             try:
-                chunk = client_socket.recv(length - len(data))
+                nbytes = client_socket.recv_into(view[received:])
             except socket.timeout:
                 return None
-            if not chunk:
+            if nbytes == 0:
                 return None
-            data.extend(chunk)
+            received += nbytes
         return bytes(data)
     
     def send_control_command(self, command: str) -> None:
@@ -201,6 +204,9 @@ class ViewerApp(tk.Tk):
 
         self._photo_image: Optional[ImageTk.PhotoImage] = None
         self._current_image_ts: float = 0.0
+        # Cache for display size to avoid recalculation
+        self._cached_display_size: Optional[tuple[int, int]] = None
+        self._last_label_size: tuple[int, int] = (0, 0)
 
         self._build_ui(args)
         self.server.start()
@@ -459,14 +465,6 @@ class ViewerApp(tk.Tk):
                                      command=self._stop_server, style='TButton', width=10)
         self.stop_button.pack(side=tk.RIGHT)
 
-    def _refresh_stats(self) -> None:
-        """Update the FPS and latency display"""
-        if hasattr(self, 'fps_var'):
-            self.fps_var.set(f"FPS: {self.stats.fps:.1f}")
-        if hasattr(self, 'latency_var'):
-            self.latency_var.set(f"Latency: {self.stats.latency_ms:.0f}ms")
-        self.after(500, self._refresh_stats)
-
     def _poll_frames(self) -> None:
         try:
             frame_data, timestamp = self.frame_queue.get_nowait()
@@ -480,7 +478,10 @@ class ViewerApp(tk.Tk):
     def _display_frame(self, frame_data: bytes, timestamp: float) -> None:
         try:
             image = Image.open(io.BytesIO(frame_data)).convert("RGB")
-            image = image.resize(self._compute_display_size(image.size), RESAMPLE_LANCZOS)
+            # Use BILINEAR for faster resizing (good quality, much faster than LANCZOS)
+            display_size = self._compute_display_size(image.size)
+            if display_size != image.size:
+                image = image.resize(display_size, Image.Resampling.BILINEAR)
             self._photo_image = ImageTk.PhotoImage(image)
             self.video_label.configure(image=self._photo_image, text="")
             now = time.time()
@@ -493,12 +494,22 @@ class ViewerApp(tk.Tk):
     def _compute_display_size(self, image_size: tuple[int, int]) -> tuple[int, int]:
         label_width = max(self.video_label.winfo_width(), 320)
         label_height = max(self.video_label.winfo_height(), 240)
+        
+        # Cache display size if label size hasn't changed
+        current_label_size = (label_width, label_height)
+        if (self._cached_display_size is not None and 
+            self._last_label_size == current_label_size):
+            return self._cached_display_size
+        
         image_width, image_height = image_size
-
         width_ratio = label_width / image_width
         height_ratio = label_height / image_height
         scale = min(width_ratio, height_ratio)
-        return int(image_width * scale), int(image_height * scale)
+        
+        display_size = (int(image_width * scale), int(image_height * scale))
+        self._cached_display_size = display_size
+        self._last_label_size = current_label_size
+        return display_size
 
     def _refresh_stats(self) -> None:
         """Update the FPS and latency display"""
