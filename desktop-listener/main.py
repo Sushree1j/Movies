@@ -8,7 +8,7 @@ import time
 import tkinter as tk
 from dataclasses import dataclass
 from tkinter import ttk
-from typing import Optional
+from typing import Optional, Tuple
 
 from PIL import Image, ImageTk
 
@@ -224,8 +224,8 @@ class ViewerApp(tk.Tk):
 
         self._photo_image: Optional[ImageTk.PhotoImage] = None
         self._current_image_ts: float = 0.0
-        self._cached_display_size: Optional[tuple[int, int]] = None
-        self._last_label_size: tuple[int, int] = (0, 0)
+        self._cached_display_size: Optional[Tuple[int, int]] = None
+        self._last_label_size: Tuple[int, int] = (0, 0)
         self._frame_count: int = 0  # Count frames to throttle UI updates
 
         self._build_ui(args)
@@ -511,7 +511,7 @@ class ViewerApp(tk.Tk):
         except Exception:
             return
 
-    def _compute_display_size(self, image_size: tuple[int, int]) -> tuple[int, int]:
+    def _compute_display_size(self, image_size: Tuple[int, int]) -> Tuple[int, int]:
         """Compute optimal display size for image, with caching"""
         label_width = max(self.video_label.winfo_width(), 320)
         label_height = max(self.video_label.winfo_height(), 240)
